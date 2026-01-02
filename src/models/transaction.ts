@@ -1,0 +1,44 @@
+import type { CategoryRead } from './category'
+import type { ProductImportance } from './product'
+
+export type ProductInTransactionRead = {
+  id: string
+  name: string
+  importance: ProductImportance
+}
+
+export type TransactionsQuery = {
+  current_period?: boolean
+  from_date?: string
+  to_date?: string
+  category_id?: string
+  product_id?: string
+}
+
+export type TransactionCreate = {
+  category_id: string
+  product_id?: string
+  amount_base: number
+  currency_base: string
+  amount_original?: number
+  currency_original?: string
+  fx_rate?: number
+  occurred_at: string
+}
+
+export type TransactionRead = {
+  id: string
+  wallet_id: string
+  user_id: string
+  refund_of_transaction_id: string | null
+  type: string
+  amount_base: number
+  currency_base: string
+  amount_original?: number
+  currency_original?: string
+  fx_rate?: number
+  occurred_at: string
+  created_at: string
+  category: CategoryRead
+  product: ProductInTransactionRead | null
+}
