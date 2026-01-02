@@ -1,0 +1,16 @@
+export { api, ApiClient, ApiError } from '@/api/client/index'
+export type { ApiErrorResponse } from '@/api/client/index'
+
+export { apiPaths } from '../apiPaths'
+export type { Id } from '../apiPaths'
+
+export { authApi } from '@/api/modules/auth.api'
+export { usersApi } from '@/api/modules/users.api'
+export { walletsApi } from '@/api/modules/wallets.api'
+export { walletMembersApi } from '@/api/modules/walletMembers.api'
+export { categoriesApi } from '@/api/modules/categories.api'
+export { productsApi } from '@/api/modules/products.api'
+export { transactionsApi } from '@/api/modules/transactions.api'
+export { recurringApi } from '@/api/modules/recurring.api'
+export { summaryApi } from '@/api/modules/summary.api'
+export { historyApi } from '@/api/modules/history.api'
