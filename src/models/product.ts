@@ -15,3 +15,9 @@ export type ProductRead = {
   created_at: string
   category: CategoryRead
 }
+
+export type ProductLite = {
+  id: string
+  name: string
+  importance: ProductImportance
+}

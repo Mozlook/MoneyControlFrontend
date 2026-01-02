@@ -1,11 +1,5 @@
 import type { CategoryRead } from './category'
-import type { ProductImportance } from './product'
-
-export type ProductInTransactionRead = {
-  id: string
-  name: string
-  importance: ProductImportance
-}
+import type { ProductLite } from './product'
 
 export type TransactionsQuery = {
   current_period?: boolean
@@ -40,5 +34,5 @@ export type TransactionRead = {
   occurred_at: string
   created_at: string
   category: CategoryRead
-  product: ProductInTransactionRead | null
+  product: ProductLite | null
 }
