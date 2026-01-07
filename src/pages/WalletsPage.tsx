@@ -1,7 +1,6 @@
 import { useWalletsQuery } from '@/queries/useWalletsQuery'
 import { routePaths } from '@/routes/routePaths'
-import { Button, EmptyState, Spinner } from '@/ui'
-import PageHeader from '@/ui/page-header'
+import { Button, EmptyState, Spinner, PageHeader } from '@/ui'
 import { Link } from 'react-router-dom'
 
 export default function WalletsPage() {
