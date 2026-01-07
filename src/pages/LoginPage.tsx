@@ -1,6 +1,5 @@
 import { authApi } from '@/api/modules'
 import { setTokenToStorage } from '@/authentication/handleToken'
-import { settings } from '@/config/settings'
 import { routePaths } from '@/routes/routePaths'
 import { notify } from '@/ui'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
@@ -11,7 +10,6 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  console.log('GOOGLE_CLIENT_ID =', settings.GOOGLE_CLIENT_ID)
   const loginMutation = useMutation({
     mutationFn: (idToken: string) => authApi.loginWithGoogle(idToken),
 
