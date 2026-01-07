@@ -1,0 +1,16 @@
+import { walletsApi } from '@/api/modules'
+import { getTokenFromStorage } from '@/authentication/handleToken'
+import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from './queryKeys'
+
+export function useWalletsQuery() {
+  const token = getTokenFromStorage()
+  const hasToken = !!token?.access_token
+
+  return useQuery({
+    queryKey: queryKeys.wallets.all,
+    queryFn: walletsApi.getAll,
+    enabled: hasToken,
+    staleTime: 30_00,
+  })
+}
