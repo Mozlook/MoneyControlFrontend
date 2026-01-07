@@ -1,6 +1,7 @@
 import { useWalletsQuery } from '@/queries/useWalletsQuery'
 import { routePaths } from '@/routes/routePaths'
 import { Button, EmptyState, Spinner } from '@/ui'
+import PageHeader from '@/ui/page-header'
 import { Link } from 'react-router-dom'
 
 export default function WalletsPage() {
@@ -10,12 +11,14 @@ export default function WalletsPage() {
   if (walletsQuery.isPending) {
     return (
       <div className="p-6">
-        <div className="flex items-center justify-between gap-6">
-          <h1 className="text-lg font-semibold text-slate-900">Wallets</h1>
-          <Button variant="primary" disabled>
-            Create wallet
-          </Button>
-        </div>
+        <PageHeader
+          title="Wallets"
+          actions={
+            <Button variant="primary" disabled>
+              Create wallet
+            </Button>
+          }
+        />
 
         <div className="flex justify-center py-16">
           <Spinner size="lg" />
@@ -31,12 +34,14 @@ export default function WalletsPage() {
 
     return (
       <div className="p-6">
-        <div className="flex items-center justify-between gap-6">
-          <h1 className="text-lg font-semibold text-slate-900">Wallets</h1>
-          <Button variant="primary" disabled>
-            Create wallet
-          </Button>
-        </div>
+        <PageHeader
+          title="Wallets"
+          actions={
+            <Button variant="primary" disabled>
+              Create wallet
+            </Button>
+          }
+        />
 
         <div className="py-16">
           <EmptyState
@@ -57,13 +62,14 @@ export default function WalletsPage() {
   if (!walletsQuery.data || walletsQuery.data.length === 0) {
     return (
       <div className="p-6">
-        <div className="flex items-center justify-between gap-6">
-          <h1 className="text-lg font-semibold text-slate-900">Wallets</h1>
-          <Button variant="primary" disabled>
-            Create wallet
-          </Button>
-        </div>
-
+        <PageHeader
+          title="Wallets"
+          actions={
+            <Button variant="primary" disabled>
+              Create wallet
+            </Button>
+          }
+        />
         <div className="py-16">
           <EmptyState
             title="You have no wallets yet"
@@ -82,13 +88,14 @@ export default function WalletsPage() {
   // Data
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between gap-6">
-        <h1 className="text-lg font-semibold text-slate-900">Wallets</h1>
-        <Button variant="primary" disabled>
-          Create wallet
-        </Button>
-      </div>
-
+      <PageHeader
+        title="Wallets"
+        actions={
+          <Button variant="primary" disabled>
+            Create wallet
+          </Button>
+        }
+      />
       <div className="mt-6 grid gap-3">
         {walletsQuery.data.map((wallet) => (
           <Link
