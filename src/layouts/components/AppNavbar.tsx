@@ -2,10 +2,13 @@ import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { routePaths } from '@/routes/routePaths'
 import { clearTokenStorage } from '@/authentication/handleToken'
 import Button from '@/ui/button'
-import { notify } from '@/ui'
+import { notify, Spinner } from '@/ui'
+import { useMeQuery } from '@/queries/useMeQuery'
 
 export default function AppNavbar() {
   const navigate = useNavigate()
+
+  const me = useMeQuery()
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'text-slate-900 font-medium' : 'text-slate-600 hover:text-slate-900'
@@ -35,6 +38,13 @@ export default function AppNavbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          {me.isPending ? (
+            <Spinner size="sm" />
+          ) : me.isError ? null : (
+            <span className="text-sm text-slate-700">
+              {me.data?.display_name ?? me.data?.email}
+            </span>
+          )}
           <Button variant="secondary" size="sm" onClick={handleLogout}>
             Logout
           </Button>
