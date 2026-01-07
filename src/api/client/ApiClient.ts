@@ -41,7 +41,6 @@ export class ApiClient {
         }
         const apiError = this.handleError(err)
 
-        // Globalny mechanizm pod FE-02 (logout na 401)
         if (apiError.status === 401) {
           clearTokenStorage()
           window.dispatchEvent(new CustomEvent('auth:unauthorized'))

@@ -9,6 +9,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss(), tsconfigPaths()],
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+    },
     server: {
       proxy: {
         '/api': {
