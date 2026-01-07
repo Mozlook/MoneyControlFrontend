@@ -15,8 +15,8 @@ export const apiPaths = {
   },
 
   wallets: {
-    getAll: () => `/wallets`,
-    create: () => `/wallets`,
+    getAll: () => `/wallets/`,
+    create: () => `/wallets/`,
     getById: (walletId: Id) => wallet(walletId),
 
     members: {
