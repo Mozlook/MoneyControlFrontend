@@ -1,6 +1,6 @@
 import { NavLink, Navigate, Outlet, useParams } from 'react-router-dom'
 import { routePaths } from '@/routes/routePaths'
-import { cn, Spinner } from '@/ui'
+import { cn, notify, Spinner } from '@/ui'
 import { WalletSwitcher } from '@/features/wallets/components/WalletSwitcher'
 import { useWalletsQuery } from '@/queries/useWalletsQuery'
 import { setLastWalletId } from '@/features/wallets/storage/lastWallet'
@@ -18,6 +18,13 @@ export default function WalletLayout() {
     setLastWalletId(walletId)
   }, [walletId])
 
+  if (wallets.isSuccess) {
+    const exists = wallets.data.some((w) => w.id === walletId)
+    if (!exists) {
+      notify.error('Wallet does not exist')
+      return <Navigate to={routePaths.wallets.list()} replace />
+    }
+  }
   const tabClass = ({ isActive }: { isActive: boolean }) =>
     cn(
       'inline-flex items-center rounded-md px-3 py-2 text-sm transition-colors',

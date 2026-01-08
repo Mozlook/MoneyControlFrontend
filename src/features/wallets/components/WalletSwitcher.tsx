@@ -24,11 +24,12 @@ export function WalletSwitcher({ currentWalletId, wallets }: WalletSwitcherProps
 
     navigate(nextPath)
   }
+
   return (
     <Select value={currentWalletId} onChange={(e) => handleChange(e.target.value)}>
       {wallets.map((w) => (
         <option key={w.id} value={w.id}>
-          {w.name} ({w.currency})
+          {w.name} ({w.currency}) ({w.role})
         </option>
       ))}
     </Select>
