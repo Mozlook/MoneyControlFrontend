@@ -5,7 +5,7 @@ export type EmptyStateProps = {
   title: string
   description?: ReactNode
   icon?: ReactNode
-  actions?: ReactNode[]
+  action?: ReactNode
   className?: string
 }
 
@@ -13,7 +13,7 @@ export default function EmptyState({
   title,
   description,
   icon,
-  actions,
+  action,
   className,
 }: EmptyStateProps) {
   const base = 'p-6 rounded-lg border border-dashed flex flex-col items-center text-center'
@@ -23,7 +23,7 @@ export default function EmptyState({
       {icon}
       <span className="font-semibold">{title}</span>
       {description && <span className="text-sm text-slate-600">{description}</span>}
-      {actions && actions.map((action) => <div className="mt-4">{action}</div>)}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   )
 }
