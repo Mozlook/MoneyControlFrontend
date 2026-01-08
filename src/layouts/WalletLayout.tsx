@@ -1,13 +1,22 @@
 import { NavLink, Navigate, Outlet, useParams } from 'react-router-dom'
 import { routePaths } from '@/routes/routePaths'
-import { cn } from '@/ui'
+import { cn, Spinner } from '@/ui'
+import { WalletSwitcher } from '@/features/wallets/components/WalletSwitcher'
+import { useWalletsQuery } from '@/queries/useWalletsQuery'
+import { setLastWalletId } from '@/features/wallets/storage/lastWallet'
+import { useEffect } from 'react'
 
 export default function WalletLayout() {
   const { walletId } = useParams<{ walletId: string }>()
+  const wallets = useWalletsQuery()
 
   if (!walletId) {
     return <Navigate to={routePaths.wallets.list()} replace />
   }
+
+  useEffect(() => {
+    setLastWalletId(walletId)
+  }, [walletId])
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -20,8 +29,13 @@ export default function WalletLayout() {
       <header className="mb-4">
         <div className="mb-3 flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">Wallet</h1>
-            <p className="text-sm text-slate-600">ID: {walletId}</p>
+            {wallets.isPending ? (
+              <Spinner size="sm" />
+            ) : wallets.isError ? (
+              <span className="text-sm text-red-600">Couldn’t load wallets</span>
+            ) : wallets.data ? (
+              <WalletSwitcher currentWalletId={walletId} wallets={wallets.data} />
+            ) : null}
           </div>
         </div>
 
