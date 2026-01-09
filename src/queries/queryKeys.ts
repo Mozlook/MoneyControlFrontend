@@ -7,5 +7,8 @@ export const queryKeys = {
     members: {
       all: (walletId: string) => ['wallets', walletId, 'members'] as const,
     },
+    categories: {
+      all: (walletId: string) => ['wallets', walletId, 'categories'] as const,
+    },
   },
 } as const
