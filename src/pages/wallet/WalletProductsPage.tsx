@@ -4,8 +4,7 @@ import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import { useState } from 'react'
 import useProductsQuery from '@/queries/useProductsQuery'
 import CreateCategoryModal from '@/features/categories/components/CreateCategoryModal'
-import { Link, useSearchParams } from 'react-router-dom'
-import { routePaths } from '@/routes/routePaths'
+import { useSearchParams } from 'react-router-dom'
 
 export default function WalletProductsPage() {
   const walletId = useWalletId()
@@ -18,42 +17,40 @@ export default function WalletProductsPage() {
   return (
     <div>
       <PageHeader
-        title="Wallet Categories"
+        title="Wallet Products"
         actions={
           isOwner && (
             <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-              Add category
+              Add product
             </Button>
           )
         }
       ></PageHeader>
       <CreateCategoryModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
-      {categories.isPending ? (
+      {products.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
         </div>
-      ) : categories.isError ? (
+      ) : products.isError ? (
         <div className="py-16">
           <EmptyState
             title="Couldn't load categories"
-            description={
-              categories.error instanceof Error ? categories.error.message : 'Unknown error'
-            }
+            description={products.error instanceof Error ? products.error.message : 'Unknown error'}
             action={
-              <Button variant="secondary" onClick={() => categories.refetch()}>
+              <Button variant="secondary" onClick={() => products.refetch()}>
                 Try again
               </Button>
             }
           />
         </div>
-      ) : !categories.data || categories.data.length === 0 ? (
+      ) : !products.data || products.data.length === 0 ? (
         <div className="py-16">
           <EmptyState
-            title="No categories yet"
+            title="No products yet"
             action={
               isOwner && (
                 <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-                  Add category
+                  Add product
                 </Button>
               )
             }
@@ -61,18 +58,10 @@ export default function WalletProductsPage() {
         </div>
       ) : (
         <div className="space-y-2 py-4">
-          {categories.data.map((c) => (
-            <Link
-              key={c.id}
-              to={{
-                pathname: routePaths.wallets.products(walletId),
-                search: `?category_id=${encodeURIComponent(c.id)}`,
-              }}
-              className="flex items-center gap-2 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50"
-            >
-              {c.icon}
-              <span>{c.name}</span>
-            </Link>
+          {products.data.map((p) => (
+            <div key={p.id}>
+              {p.name} <span>{p.importance}</span>
+            </div>
           ))}
         </div>
       )}
