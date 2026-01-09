@@ -1,9 +1,11 @@
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
-import AddMemberModal from '@/features/walletMembers/components/AddMemberModal'
 import { useState } from 'react'
 import useCategoriesQuery from '@/queries/useCategoriesQuery'
+import CreateCategoryModal from '@/features/categories/components/CreateCategoryModal'
+import { Link } from 'react-router-dom'
+import { routePaths } from '@/routes/routePaths'
 
 export default function WalletCategoriesPage() {
   const walletId = useWalletId()
@@ -23,7 +25,7 @@ export default function WalletCategoriesPage() {
           )
         }
       ></PageHeader>
-      <AddMemberModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
+      <CreateCategoryModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
       {categories.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -56,12 +58,19 @@ export default function WalletCategoriesPage() {
           />
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 py-4">
           {categories.data.map((c) => (
-            <div key={c.id} className="flex">
+            <Link
+              key={c.id}
+              to={{
+                pathname: routePaths.wallets.products(walletId),
+                search: `?category_id=${encodeURIComponent(c.id)}`,
+              }}
+              className="flex items-center gap-2 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50"
+            >
               {c.icon}
-              {c.name}
-            </div>
+              <span>{c.name}</span>
+            </Link>
           ))}
         </div>
       )}
