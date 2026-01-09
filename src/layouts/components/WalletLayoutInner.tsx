@@ -108,7 +108,7 @@ export default function WalletLayoutInner({ walletId }: WalletLayoutInnerProps) 
       </header>
 
       <section className="rounded-lg border border-slate-200 bg-white p-6">
-        <Outlet />
+        <Outlet context={{ walletId }} />
       </section>
     </div>
   )
