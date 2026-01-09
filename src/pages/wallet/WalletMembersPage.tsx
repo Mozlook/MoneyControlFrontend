@@ -2,18 +2,28 @@ import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletMembersQuery from '@/queries/useWalletMembersQuery'
 import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
+import AddMemberModal from '@/features/walletMembers/components/AddMemberModal'
+import { useState } from 'react'
 
 export default function WalletMembersPage() {
   const walletId = useWalletId()
   const members = useWalletMembersQuery(walletId)
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
+  const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
   return (
     <div>
       <PageHeader
         title="Wallet Members"
-        actions={isOwner && <Button>Add member</Button>}
+        actions={
+          isOwner && (
+            <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+              Add member
+            </Button>
+          )
+        }
       ></PageHeader>
+      <AddMemberModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
       {members.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -36,7 +46,7 @@ export default function WalletMembersPage() {
             title="No members yet"
             action={
               isOwner && (
-                <Button variant="secondary" onClick={() => members.refetch()}>
+                <Button variant="primary" onClick={() => setIsAddOpen(true)}>
                   Add member
                 </Button>
               )
@@ -44,7 +54,7 @@ export default function WalletMembersPage() {
           />
         </div>
       ) : (
-        <div className="space-y-2 p-6">
+        <div className="space-y-2">
           {members.data.map((m) => (
             <div key={m.user_id}>
               {m.email}{' '}
