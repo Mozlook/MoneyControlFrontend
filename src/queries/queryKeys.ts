@@ -10,5 +10,9 @@ export const queryKeys = {
     categories: {
       all: (walletId: string) => ['wallets', walletId, 'categories'] as const,
     },
+    products: {
+      all: (walletId: string, categoriesId: string | undefined) =>
+        ['wallets', walletId, categoriesId, 'products'] as const,
+    },
   },
 } as const
