@@ -25,8 +25,8 @@ export const apiPaths = {
     },
 
     categories: {
-      getAll: (walletId: Id) => `${wallet(walletId)}/categories`,
-      create: (walletId: Id) => `${wallet(walletId)}/categories`,
+      getAll: (walletId: Id) => `${wallet(walletId)}/categories/`,
+      create: (walletId: Id) => `${wallet(walletId)}/categories/`,
       delete: (walletId: Id, categoryId: Id) => `${wallet(walletId)}/categories/${enc(categoryId)}`,
       hardDelete: (walletId: Id, categoryId: Id) =>
         `${wallet(walletId)}/categories/${enc(categoryId)}/hard`,
