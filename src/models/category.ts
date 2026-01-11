@@ -11,3 +11,7 @@ export type CategoryRead = {
   icon: string | null
   created_at: string
 }
+
+export type CategoryReadSum = CategoryRead & {
+  period_sum: string
+}
