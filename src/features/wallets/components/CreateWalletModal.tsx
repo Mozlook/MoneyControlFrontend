@@ -101,7 +101,7 @@ export default function CreateWalletModal({ open, onOpenChange }: CreateWalletMo
             <option value="PLN">PLN</option>
             <option value="EUR">EUR</option>
             <option value="USD">USD</option>
-          </Select>{' '}
+          </Select>
           <ModalFooter>
             <ModalClose>Close</ModalClose>
             <Button type="submit" variant="primary" disabled={!canSubmit} loading={isSubmitting}>

@@ -3,7 +3,7 @@ import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import { useState } from 'react'
 import useProductsQuery from '@/queries/useProductsQuery'
-import CreateCategoryModal from '@/features/categories/components/CreateCategoryModal'
+import CreateProductModal from '@/features/products/components/CreateProductModal'
 import { useSearchParams } from 'react-router-dom'
 
 export default function WalletProductsPage() {
@@ -26,7 +26,12 @@ export default function WalletProductsPage() {
           )
         }
       ></PageHeader>
-      <CreateCategoryModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
+      <CreateProductModal
+        initialCategoryId={categoryId}
+        walletId={walletId}
+        open={isAddOpen}
+        onOpenChange={setIsAddOpen}
+      />
       {products.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -34,7 +39,7 @@ export default function WalletProductsPage() {
       ) : products.isError ? (
         <div className="py-16">
           <EmptyState
-            title="Couldn't load categories"
+            title="Couldn't load products"
             description={products.error instanceof Error ? products.error.message : 'Unknown error'}
             action={
               <Button variant="secondary" onClick={() => products.refetch()}>
