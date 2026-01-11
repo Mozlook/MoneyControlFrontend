@@ -2,15 +2,15 @@ import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import { useState } from 'react'
-import useProductsQuery from '@/queries/useProductsQuery'
 import CreateProductModal from '@/features/products/components/CreateProductModal'
 import { useSearchParams } from 'react-router-dom'
+import useProductsWithSumQuery from '@/queries/useProductsWithSumQuery'
 
 export default function WalletProductsPage() {
   const walletId = useWalletId()
   const [searchParams] = useSearchParams()
   const categoryId = searchParams.get('category_id') ?? undefined
-  const products = useProductsQuery(walletId, categoryId)
+  const products = useProductsWithSumQuery(walletId, categoryId)
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
@@ -65,7 +65,7 @@ export default function WalletProductsPage() {
         <div className="space-y-2 py-4">
           {products.data.map((p) => (
             <div key={p.id}>
-              {p.name} <span>{p.importance}</span>
+              {p.name} <span>{p.importance}</span> <span>{p.period_sum}</span>
             </div>
           ))}
         </div>

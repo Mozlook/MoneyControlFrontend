@@ -13,6 +13,8 @@ export const queryKeys = {
     products: {
       all: (walletId: string, categoryId?: string) =>
         ['wallets', walletId, 'products', { categoryId: categoryId ?? null }] as const,
+      withSum: (walletId: string, categoryId?: string) =>
+        ['wallets', walletId, 'products', 'with-sum', { categoryId: categoryId ?? null }] as const,
     },
   },
 } as const

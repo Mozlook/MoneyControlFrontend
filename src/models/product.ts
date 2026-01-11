@@ -16,6 +16,10 @@ export type ProductRead = {
   category: CategoryRead
 }
 
+export type ProductReadSum = ProductRead & {
+  period_sum: string
+}
+
 export type ProductLite = {
   id: string
   name: string
