@@ -34,6 +34,7 @@ export const apiPaths = {
 
     products: {
       getAll: (walletId: Id) => `${wallet(walletId)}/products/`,
+      getAllSum: (walletId: Id) => `${wallet(walletId)}/products/with-sum`,
       create: (walletId: Id) => `${wallet(walletId)}/products/`,
       delete: (walletId: Id, productId: Id) => `${wallet(walletId)}/products/${enc(productId)}`,
       hardDelete: (walletId: Id, productId: Id) =>
