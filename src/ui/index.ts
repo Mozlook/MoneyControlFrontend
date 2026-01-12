@@ -9,6 +9,7 @@ export { default as FieldError } from './field-error'
 export { default as Spinner } from './spinner'
 export { default as EmptyState } from './empty-state'
 export { default as PageHeader } from './page-header'
+export { default as ConfirmModal } from './confirm-modal'
 
 export {
   Modal,

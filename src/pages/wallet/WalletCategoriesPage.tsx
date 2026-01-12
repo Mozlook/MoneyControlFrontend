@@ -71,6 +71,7 @@ export default function WalletCategoriesPage() {
               {c.icon}
               <span>{c.name}</span>
               <span>{c.period_sum}</span>
+              <Button variant="danger">Delete</Button>
             </Link>
           ))}
         </div>

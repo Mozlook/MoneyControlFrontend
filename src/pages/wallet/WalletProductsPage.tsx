@@ -1,10 +1,11 @@
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletQuery from '@/queries/useWalletQuery'
-import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
+import { Spinner, EmptyState, Button, PageHeader, ConfirmModal } from '@/ui'
 import { useState } from 'react'
 import CreateProductModal from '@/features/products/components/CreateProductModal'
 import { useSearchParams } from 'react-router-dom'
 import useProductsWithSumQuery from '@/queries/useProductsWithSumQuery'
+import { useMutation } from '@tanstack/react-query'
 
 export default function WalletProductsPage() {
   const walletId = useWalletId()
@@ -14,6 +15,9 @@ export default function WalletProductsPage() {
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
+
+  deleteMutation = useMutation()
   return (
     <div>
       <PageHeader
@@ -32,6 +36,12 @@ export default function WalletProductsPage() {
         open={isAddOpen}
         onOpenChange={setIsAddOpen}
       />
+      <ConfirmModal
+        title="Delete Product?"
+        description="You can still recover this product in the future."
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+      ></ConfirmModal>
       {products.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -66,6 +76,9 @@ export default function WalletProductsPage() {
           {products.data.map((p) => (
             <div key={p.id}>
               {p.name} <span>{p.importance}</span> <span>{p.period_sum}</span>
+              <Button variant="danger" onClick={() => setIsDeleteOpen(true)}>
+                Delete
+              </Button>
             </div>
           ))}
         </div>
