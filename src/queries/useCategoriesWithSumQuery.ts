@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from './queryKeys'
 import { categoriesApi } from '@/api/modules'
 import { getTokenFromStorage } from '@/authentication/handleToken'
-import type { CategoriesWithSumParams } from '@/models/periods'
+import type { CategoriesWithSumParams } from '@/models/category'
 
 export default function useCategoriesWithSumQuery(
   walletId: string,

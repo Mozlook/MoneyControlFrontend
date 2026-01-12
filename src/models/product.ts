@@ -1,4 +1,5 @@
 import type { CategoryRead } from './category'
+import type { SummaryRange } from './summary'
 
 export type ProductImportance = 'important' | 'necessary' | 'unnecessary'
 
@@ -24,4 +25,8 @@ export type ProductLite = {
   id: string
   name: string
   importance: ProductImportance
+}
+
+export type ProductsWithSumParams = SummaryRange & {
+  category_id?: string
 }

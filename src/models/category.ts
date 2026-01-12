@@ -1,3 +1,5 @@
+import type { SummaryRange } from './summary'
+
 export type CategoryCreate = {
   name: string
   color?: string
@@ -14,4 +16,8 @@ export type CategoryRead = {
 
 export type CategoryReadSum = CategoryRead & {
   period_sum: string
+}
+
+export type CategoriesWithSumParams = SummaryRange & {
+  include_empty?: boolean
 }
