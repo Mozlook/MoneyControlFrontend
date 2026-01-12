@@ -1,12 +1,17 @@
 import { api } from '@/api/client'
 import { apiPaths } from '@/api/apiPaths'
-import type { ProductRead, ProductCreate, ProductReadSum } from '@/models/product'
+import type {
+  ProductRead,
+  ProductCreate,
+  ProductReadSum,
+  ProductsWithSumParams,
+} from '@/models/product'
 
 export const productsApi = {
   getAll: (walletId: string, params?: { category_id?: string }) =>
     api.get<ProductRead[]>(apiPaths.wallets.products.getAll(walletId), params),
 
-  getAllSum: (walletId: string, params?: { category_id: string }) =>
+  getAllSum: (walletId: string, params?: ProductsWithSumParams) =>
     api.get<ProductReadSum[]>(apiPaths.wallets.products.getAllSum(walletId), params),
 
   create: (walletId: string, payload: ProductCreate) =>

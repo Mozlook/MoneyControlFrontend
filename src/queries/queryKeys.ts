@@ -1,4 +1,5 @@
-import type { CategoriesWithSumParams } from '@/models/hookParams'
+import type { CategoriesWithSumParams } from '@/models/category'
+import type { ProductsWithSumParams } from '@/models/product'
 
 export const queryKeys = {
   me: ['me'] as const,
@@ -12,13 +13,13 @@ export const queryKeys = {
     categories: {
       all: (walletId: string) => ['wallets', walletId, 'categories'] as const,
       withSum: (walletId: string, params?: CategoriesWithSumParams) =>
-        ['wallets', walletId, 'categories', 'with-sum', params ?? {}] as const,
+        ['wallets', walletId, 'categories', 'with-sum', params ?? null] as const,
     },
     products: {
       all: (walletId: string, categoryId?: string) =>
         ['wallets', walletId, 'products', { categoryId: categoryId ?? null }] as const,
-      withSum: (walletId: string, categoryId?: string) =>
-        ['wallets', walletId, 'products', 'with-sum', { categoryId: categoryId ?? null }] as const,
+      withSum: (walletId: string, params?: ProductsWithSumParams) =>
+        ['wallets', walletId, 'products', 'with-sum', params ?? null] as const,
     },
   },
 } as const
