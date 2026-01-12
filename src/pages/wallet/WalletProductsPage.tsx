@@ -10,7 +10,7 @@ export default function WalletProductsPage() {
   const walletId = useWalletId()
   const [searchParams] = useSearchParams()
   const categoryId = searchParams.get('category_id') ?? undefined
-  const products = useProductsWithSumQuery(walletId, categoryId)
+  const products = useProductsWithSumQuery(walletId, { category_id: categoryId })
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)

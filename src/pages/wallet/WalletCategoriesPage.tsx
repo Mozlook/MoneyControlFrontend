@@ -2,14 +2,14 @@ import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import { useState } from 'react'
-import useCategoriesQuery from '@/queries/useCategoriesQuery'
 import CreateCategoryModal from '@/features/categories/components/CreateCategoryModal'
 import { Link } from 'react-router-dom'
 import { routePaths } from '@/routes/routePaths'
+import useCategoriesWithSumQuery from '@/queries/useCategoriesWithSumQuery'
 
 export default function WalletCategoriesPage() {
   const walletId = useWalletId()
-  const categories = useCategoriesQuery(walletId)
+  const categories = useCategoriesWithSumQuery(walletId)
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
@@ -70,6 +70,7 @@ export default function WalletCategoriesPage() {
             >
               {c.icon}
               <span>{c.name}</span>
+              <span>{c.period_sum}</span>
             </Link>
           ))}
         </div>
