@@ -72,8 +72,10 @@ export default function WalletProductsPage() {
         description="You can still recover this product in the future."
         open={confirmOpen}
         onOpenChange={handleConfirmOpenChange}
-        onConfirm={() => handleConfirmDelete()}
-      ></ConfirmModal>
+        onConfirm={handleConfirmDelete}
+        confirmLoading={deleteMutation.isPending}
+        confirmDisabled={!toDelete}
+      />
       {products.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />

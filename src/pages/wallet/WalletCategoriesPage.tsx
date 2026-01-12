@@ -1,11 +1,14 @@
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletQuery from '@/queries/useWalletQuery'
-import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
+import { Spinner, EmptyState, Button, PageHeader, notify, ConfirmModal } from '@/ui'
 import { useState } from 'react'
 import CreateCategoryModal from '@/features/categories/components/CreateCategoryModal'
 import { Link } from 'react-router-dom'
 import { routePaths } from '@/routes/routePaths'
 import useCategoriesWithSumQuery from '@/queries/useCategoriesWithSumQuery'
+import type { CategoryRead } from '@/models/category'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { categoriesApi } from '@/api/modules'
 
 export default function WalletCategoriesPage() {
   const walletId = useWalletId()
@@ -13,6 +16,39 @@ export default function WalletCategoriesPage() {
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
+  const [toDelete, setToDelete] = useState<{ id: string; name: string } | null>(null)
+  const queryClient = useQueryClient()
+
+  const deleteMutation = useMutation({
+    mutationFn: (categoryId: string) => categoriesApi.delete(walletId, categoryId),
+    onSuccess: () => {
+      notify.success('Category deleted')
+      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
+      setToDelete(null)
+      setConfirmOpen(false)
+    },
+    onError: (err) => {
+      notify.fromError(err, 'Failed to delete category')
+    },
+  })
+
+  function handleConfirmOpenChange(open: boolean) {
+    if (deleteMutation.isPending) return
+    setConfirmOpen(open)
+    if (!open) setToDelete(null)
+  }
+
+  function handleAskDelete(category: CategoryRead) {
+    setToDelete({ id: category.id, name: category.name })
+    setConfirmOpen(true)
+  }
+
+  function handleConfirmDelete() {
+    if (!toDelete) return
+    deleteMutation.mutate(toDelete.id)
+  }
+
   return (
     <div>
       <PageHeader
@@ -26,6 +62,16 @@ export default function WalletCategoriesPage() {
         }
       ></PageHeader>
       <CreateCategoryModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
+      <ConfirmModal
+        title={toDelete ? `Delete category "${toDelete.name}"?` : 'Delete category?'}
+        description="You can still recover this category in the future."
+        open={confirmOpen}
+        onOpenChange={handleConfirmOpenChange}
+        onConfirm={handleConfirmDelete}
+        confirmLoading={deleteMutation.isPending}
+        confirmDisabled={!toDelete}
+      />
+
       {categories.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -71,7 +117,16 @@ export default function WalletCategoriesPage() {
               {c.icon}
               <span>{c.name}</span>
               <span>{c.period_sum}</span>
-              <Button variant="danger">Delete</Button>
+              <Button
+                variant="danger"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleAskDelete(c)
+                }}
+              >
+                Delete
+              </Button>
             </Link>
           ))}
         </div>
