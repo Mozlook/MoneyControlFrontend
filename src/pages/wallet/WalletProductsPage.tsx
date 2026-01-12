@@ -1,11 +1,13 @@
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import useWalletQuery from '@/queries/useWalletQuery'
-import { Spinner, EmptyState, Button, PageHeader, ConfirmModal } from '@/ui'
+import { Spinner, EmptyState, Button, PageHeader, ConfirmModal, notify } from '@/ui'
 import { useState } from 'react'
 import CreateProductModal from '@/features/products/components/CreateProductModal'
 import { useSearchParams } from 'react-router-dom'
 import useProductsWithSumQuery from '@/queries/useProductsWithSumQuery'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { productsApi } from '@/api/modules'
+import type { ProductRead } from '@/models/product'
 
 export default function WalletProductsPage() {
   const walletId = useWalletId()
@@ -15,9 +17,38 @@ export default function WalletProductsPage() {
   const walletQuery = useWalletQuery(walletId)
   const isOwner = walletQuery.data?.role === 'owner'
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
+  const [toDelete, setToDelete] = useState<{ id: string; name: string } | null>(null)
+  const queryClient = useQueryClient()
 
-  deleteMutation = useMutation()
+  const deleteMutation = useMutation({
+    mutationFn: (productId: string) => productsApi.delete(walletId, productId),
+    onSuccess: () => {
+      notify.success('Product deleted')
+      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
+      setToDelete(null)
+      setConfirmOpen(false)
+    },
+    onError: (err) => {
+      notify.fromError(err, 'Failed to delete product')
+    },
+  })
+
+  function handleConfirmOpenChange(open: boolean) {
+    if (deleteMutation.isPending) return
+    setConfirmOpen(open)
+    if (!open) setToDelete(null)
+  }
+
+  function handleAskDelete(product: ProductRead) {
+    setToDelete({ id: product.id, name: product.name })
+    setConfirmOpen(true)
+  }
+
+  function handleConfirmDelete() {
+    if (!toDelete) return
+    deleteMutation.mutate(toDelete.id)
+  }
   return (
     <div>
       <PageHeader
@@ -37,10 +68,11 @@ export default function WalletProductsPage() {
         onOpenChange={setIsAddOpen}
       />
       <ConfirmModal
-        title="Delete Product?"
+        title={toDelete ? `Delete product "${toDelete.name}"?` : 'Delete product?'}
         description="You can still recover this product in the future."
-        open={isDeleteOpen}
-        onOpenChange={setIsDeleteOpen}
+        open={confirmOpen}
+        onOpenChange={handleConfirmOpenChange}
+        onConfirm={() => handleConfirmDelete()}
       ></ConfirmModal>
       {products.isPending ? (
         <div className="flex justify-center py-16">
@@ -76,7 +108,7 @@ export default function WalletProductsPage() {
           {products.data.map((p) => (
             <div key={p.id}>
               {p.name} <span>{p.importance}</span> <span>{p.period_sum}</span>
-              <Button variant="danger" onClick={() => setIsDeleteOpen(true)}>
+              <Button variant="danger" onClick={() => handleAskDelete(p)}>
                 Delete
               </Button>
             </div>
