@@ -1,7 +1,11 @@
 import { api } from '@/api/client'
 import { apiPaths } from '@/api/apiPaths'
-import type { CategoryRead, CategoryCreate, CategoryReadSum } from '@/models/category'
-import type { CategoriesWithSumParams } from '@/models/hookParams'
+import type {
+  CategoryRead,
+  CategoryCreate,
+  CategoryReadSum,
+  CategoriesWithSumParams,
+} from '@/models/category'
 
 export const categoriesApi = {
   getAll: (walletId: string) =>
@@ -9,6 +13,9 @@ export const categoriesApi = {
 
   getAllSum: (walletId: string, params?: CategoriesWithSumParams) =>
     api.get<CategoryReadSum[]>(apiPaths.wallets.categories.getAllSum(walletId), params),
+
+  getArchived: (walletId: string) =>
+    api.get<CategoryRead[]>(apiPaths.wallets.categories.getAll(walletId), { deleted: true }),
 
   create: (walletId: string, payload: CategoryCreate) =>
     api.post<CategoryRead>(apiPaths.wallets.categories.create(walletId), payload),

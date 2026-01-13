@@ -9,6 +9,7 @@ import useCategoriesWithSumQuery from '@/queries/useCategoriesWithSumQuery'
 import type { CategoryRead } from '@/models/category'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { categoriesApi } from '@/api/modules'
+import ArchivedCategoriesModal from '@/features/categories/components/ArchivedCategoriesModal'
 
 export default function WalletCategoriesPage() {
   const walletId = useWalletId()
@@ -18,6 +19,7 @@ export default function WalletCategoriesPage() {
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
   const [toDelete, setToDelete] = useState<{ id: string; name: string } | null>(null)
+  const [archivedOpen, setArchivedOpen] = useState(false)
   const queryClient = useQueryClient()
 
   const deleteMutation = useMutation({
@@ -55,9 +57,14 @@ export default function WalletCategoriesPage() {
         title="Wallet Categories"
         actions={
           isOwner && (
-            <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-              Add category
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={() => setArchivedOpen(true)}>
+                Archived
+              </Button>
+              <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+                Add category
+              </Button>
+            </div>
           )
         }
       ></PageHeader>
@@ -70,6 +77,11 @@ export default function WalletCategoriesPage() {
         onConfirm={handleConfirmDelete}
         confirmLoading={deleteMutation.isPending}
         confirmDisabled={!toDelete}
+      />
+      <ArchivedCategoriesModal
+        walletId={walletId}
+        open={archivedOpen}
+        onOpenChange={setArchivedOpen}
       />
 
       {categories.isPending ? (
