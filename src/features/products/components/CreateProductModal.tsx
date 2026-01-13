@@ -17,6 +17,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi } from '@/api/modules'
 import type { ProductCreate, ProductImportance } from '@/models/product'
 import useCategoriesQuery from '@/queries/useCategoriesQuery'
+import { queryKeys } from '@/queries/queryKeys'
 
 type CreateProductModalProps = {
   walletId: string
@@ -54,7 +55,10 @@ export default function CreateProductModal({
     mutationFn: (payload: ProductCreate) => productsApi.create(walletId, payload),
     onSuccess: () => {
       notify.success('Product created')
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.wallets.products.all(walletId),
+        exact: false,
+      })
       onOpenChange(false)
     },
     onError: (err) => {
