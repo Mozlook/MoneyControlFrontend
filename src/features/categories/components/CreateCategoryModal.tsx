@@ -46,6 +46,19 @@ export default function CreateCategoryModal({
       onOpenChange(false)
     },
     onError: (err) => {
+      const status = typeof (err as any)?.status === 'number' ? (err as any).status : undefined
+      const message =
+        typeof (err as any)?.message === 'string'
+          ? (err as any).message
+          : typeof (err as any)?.detail === 'string'
+            ? (err as any).detail
+            : undefined
+
+      if (status === 409) {
+        setError(message ?? 'Category with this name already exists')
+        return
+      }
+
       notify.fromError(err, 'Failed to create category')
     },
   })
