@@ -43,8 +43,8 @@ export const apiPaths = {
     },
 
     transactions: {
-      getAll: (walletId: Id) => `${wallet(walletId)}/transactions`,
-      create: (walletId: Id) => `${wallet(walletId)}/transactions`,
+      getAll: (walletId: Id) => `${wallet(walletId)}/transactions/`,
+      create: (walletId: Id) => `${wallet(walletId)}/transactions/`,
       refund: (walletId: Id, transactionId: Id) =>
         `${wallet(walletId)}/transactions/${enc(transactionId)}/refund`,
       delete: (walletId: Id, transactionId: Id) =>

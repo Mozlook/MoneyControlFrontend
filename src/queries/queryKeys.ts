@@ -1,5 +1,6 @@
 import type { CategoriesWithSumParams } from '@/models/category'
 import type { ProductsWithSumParams } from '@/models/product'
+import type { TransactionsGetAllParams } from '@/models/transaction'
 
 export const queryKeys = {
   me: ['me'] as const,
@@ -22,6 +23,10 @@ export const queryKeys = {
       withSum: (walletId: string, params?: ProductsWithSumParams) =>
         ['wallets', walletId, 'products', 'with-sum', params ?? null] as const,
       archived: (walletId: string) => ['wallets', walletId, 'products', 'archived'] as const,
+    },
+    transactions: {
+      all: (walletId: string, params?: TransactionsGetAllParams) =>
+        ['wallets', walletId, 'transations', params ?? null] as const,
     },
   },
 } as const
