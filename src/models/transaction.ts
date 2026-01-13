@@ -36,3 +36,11 @@ export type TransactionRead = {
   category: CategoryRead
   product: ProductLite | null
 }
+
+export type TransactionsGetAllParams = {
+  current_period?: boolean
+  from_date?: string // YYYY-MM-DD
+  to_date?: string // YYYY-MM-DD
+  category_id?: string
+  product_id?: string
+}
