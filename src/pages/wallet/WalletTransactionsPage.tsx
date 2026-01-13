@@ -1,16 +1,17 @@
 import { useMemo } from 'react'
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
-import type { TransactionsGetAllParams } from '@/models/transaction'
 import { useTransactionsQuery } from '@/queries/useTransationsQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
+import { useTransactionsFilters } from '@/features/transactions/hooks/useTransactionsFilter'
+import { TransactionsFiltersBar } from '@/features/transactions/components/TransactionsFiltersBar'
 import { TransactionsList } from '@/features/transactions/components/TransactionsList'
 
 export default function WalletTransactionsPage() {
   const walletId = useWalletId()
 
-  const params: TransactionsGetAllParams = { current_period: true }
+  const filtersState = useTransactionsFilters()
+  const transactionsQuery = useTransactionsQuery(walletId, filtersState.apiParams)
 
-  const transactionsQuery = useTransactionsQuery(walletId, params)
   const items = transactionsQuery.data ?? []
 
   const sorted = useMemo(() => {
@@ -35,6 +36,12 @@ export default function WalletTransactionsPage() {
         }
       />
 
+      <TransactionsFiltersBar
+        walletId={walletId}
+        state={filtersState}
+        isFetching={transactionsQuery.isFetching}
+      />
+
       {transactionsQuery.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -57,18 +64,10 @@ export default function WalletTransactionsPage() {
         </div>
       ) : sorted.length === 0 ? (
         <div className="py-16">
-          <EmptyState
-            title="No transactions yet"
-            description="Add your first transaction to start tracking spending."
-            action={
-              <Button variant="primary" disabled>
-                Add transaction
-              </Button>
-            }
-          />
+          <EmptyState title="No transactions yet" />
         </div>
       ) : (
-        <TransactionsList items={sorted} deleteDisabled={true} />
+        <TransactionsList items={sorted} deleteDisabled />
       )}
     </div>
   )
