@@ -43,7 +43,6 @@ export default function CreateProductModal({
 
   useEffect(() => {
     if (!open) {
-      // reset po zamknięciu — i ustawiamy domyślną kategorię na tę z propsa
       setCategoryId(initialCategoryId ?? '')
       setName('')
       setImportance('important')
@@ -59,7 +58,7 @@ export default function CreateProductModal({
       onOpenChange(false)
     },
     onError: (err) => {
-      notify.fromError(err, 'Failed to create product')
+      notify.fromError(err, 'Failed to create category')
     },
   })
 
