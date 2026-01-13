@@ -8,6 +8,7 @@ import useProductsWithSumQuery from '@/queries/useProductsWithSumQuery'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi } from '@/api/modules'
 import type { ProductRead } from '@/models/product'
+import ArchivedProductModal from '@/features/products/components/ArchivedProductsModal'
 
 export default function WalletProductsPage() {
   const walletId = useWalletId()
@@ -19,6 +20,7 @@ export default function WalletProductsPage() {
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false)
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false)
   const [toDelete, setToDelete] = useState<{ id: string; name: string } | null>(null)
+  const [archivedOpen, setArchivedOpen] = useState(false)
   const queryClient = useQueryClient()
 
   const deleteMutation = useMutation({
@@ -55,9 +57,14 @@ export default function WalletProductsPage() {
         title="Wallet Products"
         actions={
           isOwner && (
-            <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-              Add product
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={() => setArchivedOpen(true)}>
+                Archived
+              </Button>
+              <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+                Add product
+              </Button>
+            </div>
           )
         }
       ></PageHeader>
@@ -75,6 +82,11 @@ export default function WalletProductsPage() {
         onConfirm={handleConfirmDelete}
         confirmLoading={deleteMutation.isPending}
         confirmDisabled={!toDelete}
+      />
+      <ArchivedProductModal
+        walletId={walletId}
+        open={archivedOpen}
+        onOpenChange={setArchivedOpen}
       />
       {products.isPending ? (
         <div className="flex justify-center py-16">
