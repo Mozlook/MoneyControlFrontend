@@ -14,6 +14,9 @@ export const productsApi = {
   getAllSum: (walletId: string, params?: ProductsWithSumParams) =>
     api.get<ProductReadSum[]>(apiPaths.wallets.products.getAllSum(walletId), params),
 
+  getArchived: (walletId: string) =>
+    api.get<ProductRead[]>(apiPaths.wallets.products.getAll(walletId), { deleted: true }),
+
   create: (walletId: string, payload: ProductCreate) =>
     api.post<ProductRead>(apiPaths.wallets.products.create(walletId), payload),
 
