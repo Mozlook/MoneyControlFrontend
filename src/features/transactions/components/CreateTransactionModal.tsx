@@ -42,11 +42,8 @@ export default function CreateTransactionModal({
 
   const [categoryId, setCategoryId] = useState<string>(initialCategoryId ?? '')
   const [productId, setProductId] = useState<string>(initialProductId ?? '')
-  const [amountBase, setAmountBase] = useState<string>('')
-
-  const [useOriginal, setUseOriginal] = useState<boolean>(false)
-  const [amountOriginal, setAmountOriginal] = useState<string>('')
-  const [currencyOriginal, setCurrencyOriginal] = useState<string>('')
+  const [amount, setAmount] = useState<string>('')
+  const [currency, setCurrency] = useState<string>('')
 
   const [error, setError] = useState<string>('')
 
@@ -58,17 +55,30 @@ export default function CreateTransactionModal({
   const products = useProductsQuery(walletId, categoryId || undefined)
   const productsList = products.data ?? []
 
+  const currencyOptions = useMemo(() => {
+    const walletCur = wallet.data?.currency?.toUpperCase()
+    const all = walletCur ? [walletCur, ...CURRENCIES] : [...CURRENCIES]
+    return Array.from(new Set(all))
+  }, [wallet.data?.currency])
+
+  // reset na zamknięciu
   useEffect(() => {
     if (!open) {
       setCategoryId(initialCategoryId ?? '')
       setProductId(initialProductId ?? '')
-      setAmountBase('')
-      setUseOriginal(false)
-      setAmountOriginal('')
-      setCurrencyOriginal('')
+      setAmount('')
+      setCurrency('')
       setError('')
     }
   }, [open, initialCategoryId, initialProductId])
+
+  // jak otwierasz i masz walutę portfela – ustaw domyślnie currency
+  useEffect(() => {
+    if (!open) return
+    if (currency) return
+    const walletCur = wallet.data?.currency?.toUpperCase()
+    setCurrency(walletCur ?? currencyOptions[0] ?? 'PLN')
+  }, [open, wallet.data?.currency, currency, currencyOptions])
 
   const createMutation = useMutation({
     mutationFn: (payload: TransactionCreate) => transactionsApi.create(walletId, payload),
@@ -80,6 +90,7 @@ export default function CreateTransactionModal({
         exact: false,
       })
 
+      // bo sumy produktów/kategorii zależą od transakcji
       queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
       queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
 
@@ -96,61 +107,30 @@ export default function CreateTransactionModal({
   const productSelectDisabled =
     isSubmitting || !categoryId || products.isPending || products.isError
 
-  const currencyBase = wallet.data?.currency
-
-  const amountBaseNum = useMemo(() => Number(amountBase), [amountBase])
-  const amountBaseOk = Number.isFinite(amountBaseNum) && amountBaseNum > 0
-
-  const amountOriginalNum = useMemo(() => Number(amountOriginal), [amountOriginal])
-  const originalOk =
-    !useOriginal ||
-    (currencyOriginal.trim().length > 0 &&
-      Number.isFinite(amountOriginalNum) &&
-      amountOriginalNum > 0)
+  const amountNum = useMemo(() => Number(amount), [amount])
+  const amountOk = Number.isFinite(amountNum) && amountNum > 0
 
   const canSubmit =
-    !!categoryId &&
-    categories.isSuccess &&
-    !!productId &&
-    !!currencyBase &&
-    amountBaseOk &&
-    originalOk &&
-    !isSubmitting
+    !!categoryId && categories.isSuccess && !!productId && !!currency && amountOk && !isSubmitting
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (!categoryId) return setError('Select category')
     if (!productId) return setError('Select product')
-    if (!currencyBase) return setError('Wallet currency not loaded')
+    if (!currency) return setError('Select currency')
 
-    const amtBase = Number(amountBase)
-    if (!Number.isFinite(amtBase) || amtBase <= 0) return setError('Amount must be greater than 0')
-
-    if (useOriginal) {
-      const curOrig = currencyOriginal.trim().toUpperCase()
-      const amtOrig = Number(amountOriginal)
-
-      if (!curOrig) return setError('Original currency is required')
-      if (!Number.isFinite(amtOrig) || amtOrig <= 0) return setError('Original amount is invalid')
-    }
+    const amt = Number(amount)
+    if (!Number.isFinite(amt) || amt <= 0) return setError('Amount must be greater than 0')
 
     setError('')
 
-    const payload: TransactionCreate = {
+    createMutation.mutate({
       category_id: categoryId,
       product_id: productId,
-      amount_base: amtBase,
-      currency_base: currencyBase,
-      occurred_at: new Date().toISOString(),
-    }
-
-    if (useOriginal) {
-      payload.currency_original = currencyOriginal.trim().toUpperCase()
-      payload.amount_original = Number(amountOriginal)
-    }
-
-    createMutation.mutate(payload)
+      amount: amt,
+      currency: currency.toUpperCase(),
+    })
   }
 
   return (
@@ -252,91 +232,52 @@ export default function CreateTransactionModal({
             )}
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="transaction-amountBase">
-              Amount {currencyBase ? `(${currencyBase})` : ''}
-            </Label>
-            <Input
-              id="transaction-amountBase"
-              type="number"
-              inputMode="decimal"
-              min="0"
-              step={0.01}
-              value={amountBase}
-              onChange={(e) => {
-                setAmountBase(e.target.value)
-                if (error) setError('')
-              }}
-              disabled={isSubmitting}
-              placeholder="0.00"
-            />
-          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="transaction-amount">Amount</Label>
+              <Input
+                id="transaction-amount"
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step={0.01}
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value)
+                  if (error) setError('')
+                }}
+                disabled={isSubmitting}
+                placeholder="0.00"
+              />
+            </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              id="transaction-useOriginal"
-              type="checkbox"
-              checked={useOriginal}
-              disabled={isSubmitting}
-              onChange={(e) => {
-                const checked = e.target.checked
-                setUseOriginal(checked)
-                if (error) setError('')
-
-                if (!checked) {
-                  setAmountOriginal('')
-                  setCurrencyOriginal('')
-                }
-              }}
-            />
-            <Label htmlFor="transaction-useOriginal" className="text-sm text-slate-700">
-              Add original currency (optional)
-            </Label>
-          </div>
-
-          {useOriginal && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1">
-                <Label htmlFor="transaction-amountOriginal">Original amount</Label>
-                <Input
-                  id="transaction-amountOriginal"
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  step={0.01}
-                  value={amountOriginal}
-                  onChange={(e) => {
-                    setAmountOriginal(e.target.value)
-                    if (error) setError('')
-                  }}
-                  disabled={isSubmitting}
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="transaction-currencyOriginal">Original currency</Label>
-                <Select
-                  id="transaction-currencyOriginal"
-                  value={currencyOriginal}
-                  onChange={(e) => {
-                    setCurrencyOriginal(e.target.value)
-                    if (error) setError('')
-                  }}
-                  disabled={isSubmitting}
-                >
-                  <option value="" disabled>
-                    Select currency
+            <div className="space-y-1">
+              <Label htmlFor="transaction-currency">
+                Currency{wallet.data?.currency ? ` (wallet: ${wallet.data.currency})` : ''}
+              </Label>
+              <Select
+                id="transaction-currency"
+                value={currency}
+                onChange={(e) => {
+                  setCurrency(e.target.value)
+                  if (error) setError('')
+                }}
+                disabled={isSubmitting}
+              >
+                <option value="" disabled>
+                  Select currency
+                </option>
+                {currencyOptions.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
                   </option>
-                  {CURRENCIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </Select>
+                ))}
+              </Select>
+              <div className="text-xs text-slate-600">
+                If currency differs from wallet currency, it will be converted automatically.
               </div>
             </div>
-          )}
+          </div>
 
           <FieldError>{error}</FieldError>
 

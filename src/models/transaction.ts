@@ -11,13 +11,9 @@ export type TransactionsQuery = {
 
 export type TransactionCreate = {
   category_id: string
-  product_id?: string
-  amount_base: number
-  currency_base: string
-  amount_original?: number
-  currency_original?: string
-  fx_rate?: number
-  occurred_at: string
+  product_id: string
+  amount: number
+  currency: string
 }
 
 export type TransactionRead = {
