@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import { useTransactionsQuery } from '@/queries/useTransationsQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import { useTransactionsFilters } from '@/features/transactions/hooks/useTransactionsFilter'
 import { TransactionsFiltersBar } from '@/features/transactions/components/TransactionsFiltersBar'
 import { TransactionsList } from '@/features/transactions/components/TransactionsList'
+import CreateTransactionModal from '@/features/transactions/components/CreateTransactionModal'
 
 export default function WalletTransactionsPage() {
   const walletId = useWalletId()
@@ -19,6 +20,10 @@ export default function WalletTransactionsPage() {
       (a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
     )
   }, [items])
+  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false)
+
+  const initialCategoryId = filtersState.apiParams.category_id
+  const initialProductId = filtersState.apiParams.product_id
 
   return (
     <div>
@@ -26,7 +31,7 @@ export default function WalletTransactionsPage() {
         title="Transactions"
         actions={
           <div className="flex gap-2">
-            <Button variant="primary" disabled>
+            <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
               Add transaction
             </Button>
             <Button variant="secondary" disabled>
@@ -35,7 +40,13 @@ export default function WalletTransactionsPage() {
           </div>
         }
       />
-
+      <CreateTransactionModal
+        walletId={walletId}
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        initialCategoryId={initialCategoryId}
+        initialProductId={initialProductId}
+      />
       <TransactionsFiltersBar
         walletId={walletId}
         state={filtersState}
