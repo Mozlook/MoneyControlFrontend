@@ -61,7 +61,6 @@ export default function CreateTransactionModal({
     return Array.from(new Set(all))
   }, [wallet.data?.currency])
 
-  // reset na zamknięciu
   useEffect(() => {
     if (!open) {
       setCategoryId(initialCategoryId ?? '')
@@ -72,7 +71,6 @@ export default function CreateTransactionModal({
     }
   }, [open, initialCategoryId, initialProductId])
 
-  // jak otwierasz i masz walutę portfela – ustaw domyślnie currency
   useEffect(() => {
     if (!open) return
     if (currency) return
@@ -86,11 +84,9 @@ export default function CreateTransactionModal({
       notify.success('Transaction created')
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.wallets.transactions.all(walletId),
-        exact: false,
+        queryKey: queryKeys.wallets.transactions.root(walletId),
       })
 
-      // bo sumy produktów/kategorii zależą od transakcji
       queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
       queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
 

@@ -9,6 +9,7 @@ import CreateTransactionModal from '@/features/transactions/components/CreateTra
 import type { TransactionRead } from '@/models/transaction'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { transactionsApi } from '@/api/modules'
+import { queryKeys } from '@/queries/queryKeys'
 
 export default function WalletTransactionsPage() {
   const walletId = useWalletId()
@@ -37,9 +38,9 @@ export default function WalletTransactionsPage() {
       notify.success('Transaction refunded')
       queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
       queryClient.invalidateQueries({
-        queryKey: ['wallets', walletId, 'transactions'],
-        exact: false,
+        queryKey: queryKeys.wallets.transactions.root(walletId),
       })
+
       queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
       setToRefund(null)
       setIsRefundOpen(false)

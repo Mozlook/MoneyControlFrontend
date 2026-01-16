@@ -25,8 +25,10 @@ export const queryKeys = {
       archived: (walletId: string) => ['wallets', walletId, 'products', 'archived'] as const,
     },
     transactions: {
+      root: (walletId: string) => ['wallets', walletId, 'transactions'] as const,
+
       all: (walletId: string, params?: TransactionsGetAllParams) =>
-        ['wallets', walletId, 'transations', params ?? null] as const,
+        ['wallets', walletId, 'transactions', params ?? null] as const,
     },
   },
 } as const
