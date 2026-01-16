@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react'
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import { useTransactionsQuery } from '@/queries/useTransationsQuery'
-import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
+import { Spinner, EmptyState, Button, PageHeader, ConfirmModal, notify } from '@/ui'
 import { useTransactionsFilters } from '@/features/transactions/hooks/useTransactionsFilter'
 import { TransactionsFiltersBar } from '@/features/transactions/components/TransactionsFiltersBar'
 import { TransactionsList } from '@/features/transactions/components/TransactionsList'
 import CreateTransactionModal from '@/features/transactions/components/CreateTransactionModal'
+import type { TransactionRead } from '@/models/transaction'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { transactionsApi } from '@/api/modules'
 
 export default function WalletTransactionsPage() {
   const walletId = useWalletId()
@@ -21,10 +24,45 @@ export default function WalletTransactionsPage() {
     )
   }, [items])
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false)
+  const [isRefundOpen, setIsRefundOpen] = useState<boolean>(false)
 
+  const [toRefund, setToRefund] = useState<TransactionRead | null>(null)
   const initialCategoryId = filtersState.apiParams.category_id
   const initialProductId = filtersState.apiParams.product_id
 
+  const queryClient = useQueryClient()
+  const refundMutation = useMutation({
+    mutationFn: (transactionId: string) => transactionsApi.refund(walletId, transactionId),
+    onSuccess: () => {
+      notify.success('Transaction refunded')
+      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
+      queryClient.invalidateQueries({
+        queryKey: ['wallets', walletId, 'transactions'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
+      setToRefund(null)
+      setIsRefundOpen(false)
+    },
+    onError: (err) => {
+      notify.fromError(err, 'Failed to refund transaction')
+    },
+  })
+
+  function handleAskRefund(transaction: TransactionRead) {
+    setToRefund(transaction)
+    setIsRefundOpen(true)
+  }
+
+  function handleRefund(transactionId: string) {
+    refundMutation.mutate(transactionId)
+  }
+
+  function handleRefundOpenChange(open: boolean) {
+    if (refundMutation.isPending) return
+    setIsRefundOpen(open)
+    if (!open) setToRefund(null)
+  }
   return (
     <div>
       <PageHeader
@@ -78,8 +116,26 @@ export default function WalletTransactionsPage() {
           <EmptyState title="No transactions yet" />
         </div>
       ) : (
-        <TransactionsList items={sorted} deleteDisabled />
+        <TransactionsList items={sorted} onRefund={handleAskRefund} />
       )}
+      <ConfirmModal
+        open={isRefundOpen}
+        onOpenChange={handleRefundOpenChange}
+        title={
+          toRefund
+            ? `Refund transaction ${toRefund.amount_base} ${toRefund.currency_base}?`
+            : 'Refund transaction?'
+        }
+        description="This will create a new refund transaction with opposite amount."
+        confirmText="Refund"
+        confirmVariant="danger"
+        confirmLoading={refundMutation.isPending}
+        confirmDisabled={!toRefund}
+        onConfirm={() => {
+          if (!toRefund) return
+          handleRefund(toRefund.id)
+        }}
+      />
     </div>
   )
 }

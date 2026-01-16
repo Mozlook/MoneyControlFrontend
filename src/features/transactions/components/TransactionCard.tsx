@@ -4,11 +4,14 @@ import { formatDateTime, formatMoney } from '../utils/format'
 
 type TransactionCardProps = {
   tx: TransactionRead
-  onDelete?: (tx: TransactionRead) => void
-  deleteDisabled?: boolean
+  onRefund?: (tx: TransactionRead) => void
+  alreadyRefunded?: boolean
 }
 
-export function TransactionCard({ tx, onDelete, deleteDisabled = true }: TransactionCardProps) {
+export function TransactionCard({ tx, onRefund, alreadyRefunded }: TransactionCardProps) {
+  const isRefundTx = !!tx.refund_of_transaction_id
+  const canRefund = !isRefundTx && !alreadyRefunded && !!onRefund
+
   const subtitleParts = [
     tx.product ? `Product: ${tx.product.name}` : 'No product',
     `Date: ${formatDateTime(tx.occurred_at)}`,
@@ -38,17 +41,19 @@ export function TransactionCard({ tx, onDelete, deleteDisabled = true }: Transac
         >
           {formatMoney(tx.amount_base, tx.currency_base)}
         </div>
-
-        <div className="mt-2 flex justify-end">
-          <Button
-            variant="danger"
-            size="sm"
-            disabled={deleteDisabled}
-            onClick={() => onDelete?.(tx)}
-          >
-            Delete
-          </Button>
-        </div>
+        {canRefund ? (
+          <div className="mt-2 flex justify-end">
+            <Button variant="danger" size="sm" onClick={() => onRefund?.(tx)}>
+              Refund
+            </Button>
+          </div>
+        ) : alreadyRefunded ? (
+          <div className="mt-2 flex justify-end">
+            <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-700">
+              Already refunded
+            </span>
+          </div>
+        ) : null}
       </div>
     </div>
   )
