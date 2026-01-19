@@ -12,12 +12,15 @@ export const queryKeys = {
       all: (walletId: string) => ['wallets', walletId, 'members'] as const,
     },
     categories: {
+      root: (walletId: string) => ['wallets', walletId, 'categories'] as const,
       all: (walletId: string) => ['wallets', walletId, 'categories'] as const,
       withSum: (walletId: string, params?: CategoriesWithSumParams) =>
         ['wallets', walletId, 'categories', 'with-sum', params ?? null] as const,
       archived: (walletId: string) => ['wallets', walletId, 'categories', 'archived'] as const,
     },
+
     products: {
+      root: (walletId: string) => ['wallets', walletId, 'products'] as const,
       all: (walletId: string, categoryId?: string) =>
         ['wallets', walletId, 'products', { categoryId: categoryId ?? null }] as const,
       withSum: (walletId: string, params?: ProductsWithSumParams) =>
