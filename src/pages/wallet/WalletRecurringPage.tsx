@@ -4,6 +4,7 @@ import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import { useRecurringQuery } from '@/queries/useRecurringQuery'
 import { useState } from 'react'
 import CreateRecurringModal from '@/features/recurring/components/CreateRecurringModal'
+import RecurringTransactionsItem from '@/features/recurring/components/RecurringTransactionsItem'
 
 export default function WalletRecurringPage() {
   const walletId = useWalletId()
@@ -67,21 +68,7 @@ export default function WalletRecurringPage() {
       ) : (
         <div className="space-y-2 py-4">
           {recurring.data.map((r) => (
-            <div
-              key={r.id}
-              className="flex items-center gap-2 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50"
-            >
-              <span>{r.category.name}</span>
-              <span>{r.product?.name}</span>
-              <span>
-                {r.amount_base} {r.currency_base}
-              </span>
-              <span>{r.description}</span>
-              <span> {r.last_applied_at ? r.last_applied_at : 'never applied'}</span>
-              <Button variant="danger" disabled>
-                Deactivate
-              </Button>
-            </div>
+            <RecurringTransactionsItem key={r.id} item={r} showActions={isOwner} />
           ))}
         </div>
       )}

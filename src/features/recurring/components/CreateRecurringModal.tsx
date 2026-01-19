@@ -43,7 +43,7 @@ export default function CreateRecurringModal({
   const [error, setError] = useState<string>('')
 
   const wallet = useWalletQuery(walletId)
-  const walletCurrency = wallet.data?.currency?.toUpperCase() // string | undefined
+  const walletCurrency = wallet.data?.currency?.toUpperCase()
   const walletCurrencyLabel = walletCurrency ?? (wallet.isPending ? '...' : '—')
 
   const categories = useCategoriesQuery(walletId)
@@ -92,7 +92,7 @@ export default function CreateRecurringModal({
     categories.isSuccess &&
     !!productId &&
     amountOk &&
-    !!walletCurrency && // <- kluczowe: nie pozwalamy submitować bez waluty z portfela
+    !!walletCurrency &&
     !isSubmitting
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
