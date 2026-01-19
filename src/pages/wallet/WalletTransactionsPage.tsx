@@ -10,6 +10,7 @@ import type { TransactionRead } from '@/models/transaction'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { transactionsApi } from '@/api/modules'
 import { queryKeys } from '@/queries/queryKeys'
+import { downloadBlob } from '@/features/transactions/utils/download'
 
 export default function WalletTransactionsPage() {
   const walletId = useWalletId()
@@ -50,6 +51,14 @@ export default function WalletTransactionsPage() {
     },
   })
 
+  const exportMutation = useMutation({
+    mutationFn: (walletId: string) => transactionsApi.exportCsv(walletId, filtersState.apiParams),
+    onSuccess: (blob) => {
+      downloadBlob(blob, `transactions-${new Date().toISOString().slice(0, 10)}.csv`)
+    },
+    onError: (err) => notify.fromError(err, 'Export failed'),
+  })
+
   function handleAskRefund(transaction: TransactionRead) {
     setToRefund(transaction)
     setIsRefundOpen(true)
@@ -73,7 +82,12 @@ export default function WalletTransactionsPage() {
             <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
               Add transaction
             </Button>
-            <Button variant="secondary" disabled>
+            <Button
+              variant="secondary"
+              onClick={() => exportMutation.mutate(walletId)}
+              disabled={exportMutation.isPending}
+              loading={exportMutation.isPending}
+            >
               Export CSV
             </Button>
           </div>
