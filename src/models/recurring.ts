@@ -30,3 +30,7 @@ export type RecurringUpdate = {
   currency_base?: string
   description?: string | null
 }
+
+export type RecurringParams = {
+  active?: boolean
+}
