@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
   Button,
   FieldError,
@@ -12,18 +12,20 @@ import {
   ModalTitle,
   notify,
   Select,
+  Textarea,
 } from '@/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { productsApi } from '@/api/modules'
-import type { ProductCreate } from '@/models/product'
 import useCategoriesQuery from '@/queries/useCategoriesQuery'
 import { queryKeys } from '@/queries/queryKeys'
+import useProductsQuery from '@/queries/useProductsQuery'
+import { recurringApi } from '@/api/modules'
+import useWalletQuery from '@/queries/useWalletQuery'
+import type { RecurringCreate } from '@/models/recurring'
 
 type CreateRecurringModalProps = {
   walletId: string
   open: boolean
   onOpenChange: (open: boolean) => void
-  initialCategoryId?: string
 }
 
 export default function CreateRecurringModal({
@@ -34,79 +36,112 @@ export default function CreateRecurringModal({
   const queryClient = useQueryClient()
 
   const [categoryId, setCategoryId] = useState<string>('')
-  const [name, setName] = useState<string>('')
+  const [productId, setProductId] = useState<string>('')
+  const [amount, setAmount] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+
   const [error, setError] = useState<string>('')
+
+  const wallet = useWalletQuery(walletId)
+  const walletCurrency = wallet.data?.currency?.toUpperCase() // string | undefined
+  const walletCurrencyLabel = walletCurrency ?? (wallet.isPending ? '...' : '—')
 
   const categories = useCategoriesQuery(walletId)
   const categoriesList = categories.data ?? []
 
+  const products = useProductsQuery(walletId, categoryId || undefined)
+  const productsList = products.data ?? []
+
   useEffect(() => {
     if (!open) {
       setCategoryId('')
-      setName('')
+      setProductId('')
+      setAmount('')
+      setDescription('')
       setError('')
     }
   }, [open])
 
   const createMutation = useMutation({
-    mutationFn: (payload: ProductCreate) => productsApi.create(walletId, payload),
+    mutationFn: (payload: RecurringCreate) => recurringApi.create(walletId, payload),
     onSuccess: () => {
-      notify.success('Product created')
+      notify.success('Recurring transaction created')
+
       queryClient.invalidateQueries({
-        queryKey: queryKeys.wallets.products.all(walletId),
-        exact: false,
+        queryKey: queryKeys.wallets.recurring.root(walletId),
       })
+
       onOpenChange(false)
     },
     onError: (err) => {
-      notify.fromError(err, 'Failed to create category')
+      notify.fromError(err, 'Failed to create recurring transaction')
     },
   })
 
   const isSubmitting = createMutation.isPending
+
   const categorySelectDisabled = isSubmitting || categories.isPending || categories.isError
-  const canSubmit = name.trim().length > 0 && !!categoryId && categories.isSuccess && !isSubmitting
+  const productSelectDisabled =
+    isSubmitting || !categoryId || products.isPending || products.isError
+
+  const amountNum = useMemo(() => Number(amount), [amount])
+  const amountOk = Number.isFinite(amountNum) && amountNum > 0
+
+  const canSubmit =
+    !!categoryId &&
+    categories.isSuccess &&
+    !!productId &&
+    amountOk &&
+    !!walletCurrency && // <- kluczowe: nie pozwalamy submitować bez waluty z portfela
+    !isSubmitting
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const trimmedName = name.trim()
-    if (!trimmedName) return setError('Name is required')
     if (!categoryId) return setError('Select category')
+    if (!productId) return setError('Select product')
+
+    const amt = Number(amount)
+    if (!Number.isFinite(amt) || amt <= 0) return setError('Amount must be greater than 0')
+
+    const cur = walletCurrency
+    if (!cur) return setError('Wallet currency is missing')
 
     setError('')
+
+    createMutation.mutate({
+      category_id: categoryId,
+      product_id: productId,
+      amount_base: amt,
+      currency_base: cur,
+      description,
+    })
   }
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange}>
+    <Modal
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isSubmitting && !nextOpen) return
+        onOpenChange(nextOpen)
+      }}
+    >
       <ModalContent>
         <ModalHeader>
-          <ModalTitle>Create Product</ModalTitle>
+          <ModalTitle>Create Recurring Transaction</ModalTitle>
         </ModalHeader>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="space-y-1">
-            <Label htmlFor="product-name">Product name</Label>
-            <Input
-              id="product-name"
-              type="text"
-              value={name}
-              invalid={!!error}
-              onChange={(e) => {
-                setName(e.target.value)
-                if (error && e.target.value.trim()) setError('')
-              }}
-              disabled={isSubmitting}
-              autoFocus
-            />
-          </div>
-
-          <div className="space-y-1">
-            <Label htmlFor="product-categoryId">Category</Label>
+            <Label htmlFor="recurringTransaction-categoryId">Category</Label>
             <Select
-              id="product-categoryId"
+              id="recurringTransaction-categoryId"
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={(e) => {
+                setCategoryId(e.target.value)
+                setProductId('')
+                if (error) setError('')
+              }}
               disabled={categorySelectDisabled}
             >
               <option value="" disabled>
@@ -132,6 +167,7 @@ export default function CreateRecurringModal({
                 size="sm"
                 type="button"
                 onClick={() => categories.refetch()}
+                disabled={isSubmitting}
               >
                 Retry loading categories
               </Button>
@@ -139,13 +175,95 @@ export default function CreateRecurringModal({
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="product-importance">Importance</Label>
+            <Label htmlFor="recurringTransaction-productId">Product</Label>
+            <Select
+              id="recurringTransaction-productId"
+              value={productId}
+              onChange={(e) => {
+                setProductId(e.target.value)
+                if (error) setError('')
+              }}
+              disabled={productSelectDisabled}
+            >
+              <option value="" disabled>
+                {!categoryId
+                  ? 'Select category first'
+                  : products.isPending
+                    ? 'Loading products...'
+                    : products.isError
+                      ? 'Failed to load products'
+                      : productsList.length === 0
+                        ? 'No products in this category'
+                        : 'Select product'}
+              </option>
+
+              {productsList.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </Select>
+
+            {products.isError && categoryId && (
+              <Button
+                variant="secondary"
+                size="sm"
+                type="button"
+                onClick={() => products.refetch()}
+                disabled={isSubmitting}
+              >
+                Retry loading products
+              </Button>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="recurringTransaction-amount">
+              Amount{walletCurrency ? ` (wallet: ${walletCurrency})` : ''}
+            </Label>
+
+            <div className="relative">
+              <Input
+                id="recurringTransaction-amount"
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step={0.01}
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value)
+                  if (error) setError('')
+                }}
+                disabled={isSubmitting}
+                placeholder="0.00"
+                className="pr-14"
+              />
+
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-slate-500">
+                {walletCurrencyLabel}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="recurringTransaction-description">Description</Label>
+            <Textarea
+              id="recurringTransaction-description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={isSubmitting}
+            />
           </div>
 
           <FieldError>{error}</FieldError>
 
           <ModalFooter>
-            <ModalClose>Close</ModalClose>
+            <ModalClose>
+              <Button variant="secondary" type="button" disabled={isSubmitting}>
+                Cancel
+              </Button>
+            </ModalClose>
+
             <Button type="submit" variant="primary" disabled={!canSubmit} loading={isSubmitting}>
               Create
             </Button>

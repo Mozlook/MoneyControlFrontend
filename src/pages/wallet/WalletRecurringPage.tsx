@@ -73,6 +73,11 @@ export default function WalletRecurringPage() {
             >
               <span>{r.category.name}</span>
               <span>{r.product?.name}</span>
+              <span>
+                {r.amount_base} {r.currency_base}
+              </span>
+              <span>{r.description}</span>
+              <span> {r.last_applied_at ? r.last_applied_at : 'never applied'}</span>
               <Button variant="danger" disabled>
                 Deactivate
               </Button>
