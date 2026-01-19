@@ -6,6 +6,7 @@ type RecurringTransactionsItemProps = {
   onDeactivate?: (id: string) => void
   disableActions?: boolean
   showActions?: boolean
+  onEdit: (item: RecurringRead) => void
 }
 
 function formatAmount(value: unknown) {
@@ -33,6 +34,7 @@ export default function RecurringTransactionsItem({
   onDeactivate,
   disableActions = false,
   showActions = true,
+  onEdit,
 }: RecurringTransactionsItemProps) {
   const categoryName = item.category?.name ?? '—'
   const productName = item.product?.name
@@ -82,14 +84,18 @@ export default function RecurringTransactionsItem({
           </div>
 
           {showActions && (
-            <Button
-              variant="danger"
-              disabled={!canDeactivate}
-              onClick={() => onDeactivate?.(item.id)}
-              title={!onDeactivate ? 'Deactivate handler not provided' : undefined}
-            >
-              Deactivate
-            </Button>
+            <div className="flex gap-4">
+              <Button variant="secondary" onClick={() => onEdit(item)}>
+                Edit
+              </Button>
+              <Button
+                variant="danger"
+                disabled={!canDeactivate}
+                onClick={() => onDeactivate?.(item.id)}
+              >
+                Deactivate
+              </Button>
+            </div>
           )}
         </div>
       </div>

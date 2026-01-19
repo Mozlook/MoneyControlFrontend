@@ -5,6 +5,8 @@ import { useRecurringQuery } from '@/queries/useRecurringQuery'
 import { useState } from 'react'
 import CreateRecurringModal from '@/features/recurring/components/CreateRecurringModal'
 import RecurringTransactionsItem from '@/features/recurring/components/RecurringTransactionsItem'
+import type { RecurringRead } from '@/models/recurring'
+import EditRecurringModal from '@/features/recurring/components/EditRecurringModal'
 
 export default function WalletRecurringPage() {
   const walletId = useWalletId()
@@ -13,7 +15,13 @@ export default function WalletRecurringPage() {
   const isOwner = walletQuery.data?.role === 'owner'
 
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false)
+  const [editing, setEditing] = useState<RecurringRead | null>(null)
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false)
 
+  function onEdit(item: RecurringRead) {
+    setEditing(item)
+    setIsEditOpen(true)
+  }
   return (
     <div>
       <PageHeader
@@ -33,7 +41,14 @@ export default function WalletRecurringPage() {
         onOpenChange={setIsCreateOpen}
         walletId={walletId}
       />
-
+      {editing && (
+        <EditRecurringModal
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+          walletId={walletId}
+          item={editing}
+        />
+      )}
       {recurring.isPending ? (
         <div className="flex justify-center py-16">
           <Spinner size="md" />
@@ -68,7 +83,12 @@ export default function WalletRecurringPage() {
       ) : (
         <div className="space-y-2 py-4">
           {recurring.data.map((r) => (
-            <RecurringTransactionsItem key={r.id} item={r} showActions={isOwner} />
+            <RecurringTransactionsItem
+              key={r.id}
+              item={r}
+              showActions={isOwner}
+              onEdit={() => onEdit(r)}
+            />
           ))}
         </div>
       )}
