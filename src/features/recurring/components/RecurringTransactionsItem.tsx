@@ -3,8 +3,7 @@ import type { RecurringRead } from '@/models/recurring'
 
 type RecurringTransactionsItemProps = {
   item: RecurringRead
-  onDeactivate?: (id: string) => void
-  disableActions?: boolean
+  setDeactivating: (item: RecurringRead) => void
   showActions?: boolean
   onEdit: (item: RecurringRead) => void
 }
@@ -31,8 +30,7 @@ function formatDateTime(value?: string | null) {
 
 export default function RecurringTransactionsItem({
   item,
-  onDeactivate,
-  disableActions = false,
+  setDeactivating,
   showActions = true,
   onEdit,
 }: RecurringTransactionsItemProps) {
@@ -42,8 +40,7 @@ export default function RecurringTransactionsItem({
   const currency = (item.currency_base ?? '').toUpperCase()
   const lastApplied = formatDateTime(item.last_applied_at ?? null)
   const description = item.description?.trim()
-
-  const canDeactivate = showActions && !!onDeactivate && !disableActions
+  const active = item.active
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50">
@@ -88,13 +85,15 @@ export default function RecurringTransactionsItem({
               <Button variant="secondary" onClick={() => onEdit(item)}>
                 Edit
               </Button>
-              <Button
-                variant="danger"
-                disabled={!canDeactivate}
-                onClick={() => onDeactivate?.(item.id)}
-              >
-                Deactivate
-              </Button>
+              {active ? (
+                <Button variant="danger" onClick={() => setDeactivating(item)}>
+                  Deactivate
+                </Button>
+              ) : (
+                <Button variant="danger" onClick={() => setDeactivating(item)}>
+                  Activate
+                </Button>
+              )}
             </div>
           )}
         </div>
