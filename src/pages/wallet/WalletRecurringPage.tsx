@@ -10,6 +10,7 @@ import EditRecurringModal from '@/features/recurring/components/EditRecurringMod
 import { recurringApi } from '@/api/modules'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/queries/queryKeys'
+import DeactivateRecurringDescription from '@/features/recurring/components/DeactivateRecurringDescription'
 
 export default function WalletRecurringPage() {
   const walletId = useWalletId()
@@ -20,6 +21,7 @@ export default function WalletRecurringPage() {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false)
   const [editing, setEditing] = useState<RecurringRead | null>(null)
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false)
+  const [isApplyOpen, setIsApplyOpen] = useState<boolean>(false)
 
   const [deactivating, setDeactivating] = useState<RecurringRead | null>(null)
 
@@ -47,6 +49,16 @@ export default function WalletRecurringPage() {
     },
   })
 
+  const applyMutation = useMutation({
+    mutationFn: () => recurringApi.apply(walletId),
+    onSuccess: () => {
+      notify.success('Recurring transactions applied')
+    },
+    onError: (err) => {
+      notify.fromError(err)
+    },
+  })
+
   function handleActivate(recurringId: string) {
     if (!recurringId) return
     activateMutation.mutate(recurringId)
@@ -62,6 +74,10 @@ export default function WalletRecurringPage() {
         actions={
           isOwner && (
             <div className="flex gap-2">
+              <Button variant="primary" onClick={() => setIsApplyOpen(true)}>
+                Apply
+              </Button>
+
               <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
                 Add recurring transaction
               </Button>
@@ -94,42 +110,7 @@ export default function WalletRecurringPage() {
               }`
             : 'Deactivate recurring transaction?'
         }
-        description={
-          deactivating ? (
-            <div className="space-y-2">
-              <div>
-                This will <span className="font-medium">disable</span> this recurring item, so it
-                won’t be included when you run <span className="font-medium">Apply recurring </span>
-                in future billing periods.
-              </div>
-
-              <div className="text-slate-600">
-                Existing transactions generated in the past will
-                <span className="font-medium">not</span> be removed.
-              </div>
-
-              <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-sm text-slate-700">
-                <div>
-                  <span className="font-medium">Amount:</span> {deactivating.amount_base}
-                  {(deactivating.currency_base ?? '').toUpperCase()}
-                </div>
-
-                <div>
-                  <span className="font-medium">Last applied:</span>
-                  {deactivating.last_applied_at
-                    ? new Date(deactivating.last_applied_at).toLocaleString()
-                    : 'Never'}
-                </div>
-
-                {deactivating.description ? (
-                  <div className="mt-1">
-                    <span className="font-medium">Note:</span> {deactivating.description}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          ) : null
-        }
+        description={deactivating ? <DeactivateRecurringDescription item={deactivating} /> : null}
         confirmText="Deactivate"
         confirmVariant="danger"
         confirmLoading={deactivateMutation.isPending}
@@ -137,6 +118,20 @@ export default function WalletRecurringPage() {
         onConfirm={() => {
           if (!deactivating) return
           deactivateMutation.mutate(deactivating.id)
+        }}
+      />
+      <ConfirmModal
+        open={isApplyOpen}
+        onOpenChange={() => setIsApplyOpen(false)}
+        title="Apply recurring transactions?"
+        description="This operation will create active transactions that weren't created in this billing period. (It will not create duplicates)"
+        confirmText="Apply"
+        confirmVariant="primary"
+        confirmLoading={applyMutation.isPending}
+        confirmDisabled={!isApplyOpen}
+        onConfirm={() => {
+          applyMutation.mutate()
+          setIsApplyOpen(false)
         }}
       />
 
