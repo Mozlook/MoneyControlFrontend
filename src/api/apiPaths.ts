@@ -59,6 +59,8 @@ export const apiPaths = {
         `${wallet(walletId)}/recurring/${enc(recurringId)}`,
       delete: (walletId: Id, recurringId: Id) =>
         `${wallet(walletId)}/recurring/${enc(recurringId)}`,
+      activate: (walletId: Id, recurringId: Id) =>
+        `${wallet(walletId)}/recurring/${enc(recurringId)}/activate`,
       apply: (walletId: Id) => `${wallet(walletId)}/recurring/apply`,
     },
 

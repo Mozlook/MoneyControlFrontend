@@ -36,6 +36,21 @@ export default function WalletRecurringPage() {
     },
   })
 
+  const activateMutation = useMutation({
+    mutationFn: (recurringId: string) => recurringApi.activate(walletId, recurringId),
+    onSuccess: () => {
+      notify.success('Recurring transaction activated')
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.recurring.root(walletId) })
+    },
+    onError: (err) => {
+      notify.fromError(err)
+    },
+  })
+
+  function handleActivate(recurringId: string) {
+    if (!recurringId) return
+    activateMutation.mutate(recurringId)
+  }
   function onEdit(item: RecurringRead) {
     setEditing(item)
     setIsEditOpen(true)
@@ -69,10 +84,53 @@ export default function WalletRecurringPage() {
       )}
       <ConfirmModal
         open={!!deactivating}
-        onOpenChange={() => setDeactivating(null)}
-        title={deactivating ? `Refund transaction ${deactivating.id} ` : 'Refund transaction?'}
-        description="This will create a new refund transaction with opposite amount."
-        confirmText="Refund"
+        onOpenChange={(open) => {
+          if (!open) setDeactivating(null)
+        }}
+        title={
+          deactivating
+            ? `Deactivate recurring: ${deactivating.category.name}${
+                deactivating.product?.name ? ` / ${deactivating.product.name}` : ''
+              }`
+            : 'Deactivate recurring transaction?'
+        }
+        description={
+          deactivating ? (
+            <div className="space-y-2">
+              <div>
+                This will <span className="font-medium">disable</span> this recurring item, so it
+                won’t be included when you run <span className="font-medium">Apply recurring </span>
+                in future billing periods.
+              </div>
+
+              <div className="text-slate-600">
+                Existing transactions generated in the past will
+                <span className="font-medium">not</span> be removed.
+              </div>
+
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-2 text-sm text-slate-700">
+                <div>
+                  <span className="font-medium">Amount:</span> {deactivating.amount_base}
+                  {(deactivating.currency_base ?? '').toUpperCase()}
+                </div>
+
+                <div>
+                  <span className="font-medium">Last applied:</span>
+                  {deactivating.last_applied_at
+                    ? new Date(deactivating.last_applied_at).toLocaleString()
+                    : 'Never'}
+                </div>
+
+                {deactivating.description ? (
+                  <div className="mt-1">
+                    <span className="font-medium">Note:</span> {deactivating.description}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : null
+        }
+        confirmText="Deactivate"
         confirmVariant="danger"
         confirmLoading={deactivateMutation.isPending}
         confirmDisabled={!deactivating}
@@ -122,6 +180,7 @@ export default function WalletRecurringPage() {
               showActions={isOwner}
               onEdit={() => onEdit(r)}
               setDeactivating={setDeactivating}
+              handleActivate={handleActivate}
             />
           ))}
         </div>

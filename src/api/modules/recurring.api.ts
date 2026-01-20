@@ -15,5 +15,8 @@ export const recurringApi = {
   deactivate: (walletId: string, recurringId: string) =>
     api.delete<unknown>(apiPaths.wallets.recurring.delete(walletId, recurringId)),
 
+  activate: (walletId: string, recurringId: string) =>
+    api.put<unknown>(apiPaths.wallets.recurring.activate(walletId, recurringId)),
+
   apply: (walletId: string) => api.post<unknown>(apiPaths.wallets.recurring.apply(walletId)),
 }

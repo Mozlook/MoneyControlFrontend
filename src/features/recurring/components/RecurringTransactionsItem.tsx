@@ -6,6 +6,7 @@ type RecurringTransactionsItemProps = {
   setDeactivating: (item: RecurringRead) => void
   showActions?: boolean
   onEdit: (item: RecurringRead) => void
+  handleActivate: (recurringId: string) => void
 }
 
 function formatAmount(value: unknown) {
@@ -33,6 +34,7 @@ export default function RecurringTransactionsItem({
   setDeactivating,
   showActions = true,
   onEdit,
+  handleActivate,
 }: RecurringTransactionsItemProps) {
   const categoryName = item.category?.name ?? '—'
   const productName = item.product?.name
@@ -90,7 +92,7 @@ export default function RecurringTransactionsItem({
                   Deactivate
                 </Button>
               ) : (
-                <Button variant="danger" onClick={() => setDeactivating(item)}>
+                <Button variant="danger" onClick={() => handleActivate(item.id)}>
                   Activate
                 </Button>
               )}
