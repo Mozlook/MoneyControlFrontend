@@ -53,6 +53,8 @@ export default function WalletRecurringPage() {
     mutationFn: () => recurringApi.apply(walletId),
     onSuccess: () => {
       notify.success('Recurring transactions applied')
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.recurring.root(walletId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.transactions.root(walletId) })
     },
     onError: (err) => {
       notify.fromError(err)
