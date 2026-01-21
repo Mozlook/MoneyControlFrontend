@@ -11,7 +11,14 @@ export function currentPeriodDates(billingDay: number, now: Date = new Date()) {
   const end = new Date(start.getFullYear(), start.getMonth() + 1, billingDay - 1)
 
   return {
-    startDate: start,
-    endDate: end,
+    startDate: toYmd(start),
+    endDate: toYmd(end),
   }
+}
+
+function toYmd(d: Date) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
 }
