@@ -5,6 +5,7 @@ import type { TransactionsGetAllParams } from '@/models/transaction'
 
 export const queryKeys = {
   me: ['me'] as const,
+  settings: ['me', 'settings'] as const,
 
   wallets: {
     all: ['wallets'] as const,
