@@ -1,6 +1,7 @@
 import type { CategoriesWithSumParams } from '@/models/category'
 import type { ProductsWithSumParams } from '@/models/product'
 import type { RecurringParams } from '@/models/recurring'
+import type { SummaryRange } from '@/models/summary'
 import type { TransactionsGetAllParams } from '@/models/transaction'
 
 export const queryKeys = {
@@ -39,6 +40,11 @@ export const queryKeys = {
       root: (walletId: string) => ['wallets', walletId, 'recurring'] as const,
       all: (walletId: string, params?: RecurringParams) =>
         ['wallets', walletId, 'recurring', params ?? null] as const,
+    },
+    summary: {
+      root: (walletId: string) => ['wallets', walletId, 'summary'] as const,
+      byImportance: (walletId: string, params: SummaryRange) =>
+        ['wallets', walletId, 'summary', 'importance', params] as const,
     },
   },
 } as const
