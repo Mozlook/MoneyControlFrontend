@@ -3,13 +3,12 @@ import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader, notify, ConfirmModal } from '@/ui'
 import { useState } from 'react'
 import CreateCategoryModal from '@/features/categories/components/CreateCategoryModal'
-import { Link } from 'react-router-dom'
-import { routePaths } from '@/routes/routePaths'
 import useCategoriesWithSumQuery from '@/queries/useCategoriesWithSumQuery'
 import type { CategoryRead } from '@/models/category'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { categoriesApi } from '@/api/modules'
 import ArchivedCategoriesModal from '@/features/categories/components/ArchivedCategoriesModal'
+import CategoryWithSumListItem from '@/features/categories/components/CategoryWithSumListItem'
 
 export default function WalletCategoriesPage() {
   const walletId = useWalletId()
@@ -118,28 +117,14 @@ export default function WalletCategoriesPage() {
       ) : (
         <div className="space-y-2 py-4">
           {categories.data.map((c) => (
-            <Link
+            <CategoryWithSumListItem
               key={c.id}
-              to={{
-                pathname: routePaths.wallets.products(walletId),
-                search: `?category_id=${encodeURIComponent(c.id)}`,
-              }}
-              className="flex items-center gap-2 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50"
-            >
-              {c.icon}
-              <span>{c.name}</span>
-              <span>{c.period_sum}</span>
-              <Button
-                variant="danger"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleAskDelete(c)
-                }}
-              >
-                Delete
-              </Button>
-            </Link>
+              walletId={walletId}
+              category={c}
+              canManage={isOwner}
+              disabled={deleteMutation.isPending}
+              onDelete={handleAskDelete}
+            />
           ))}
         </div>
       )}
