@@ -56,7 +56,7 @@ export default function CreateProductModal({
     onSuccess: () => {
       notify.success('Product created')
       queryClient.invalidateQueries({
-        queryKey: queryKeys.wallets.products.all(walletId),
+        queryKey: queryKeys.wallets.products.root(walletId),
         exact: false,
       })
       onOpenChange(false)

@@ -9,6 +9,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi } from '@/api/modules'
 import type { ProductRead } from '@/models/product'
 import ArchivedProductModal from '@/features/products/components/ArchivedProductsModal'
+import ProductWithSumListItem from '@/features/products/components/PRoductsWithSumListItem'
+import { queryKeys } from '@/queries/queryKeys'
 
 export default function WalletProductsPage() {
   const walletId = useWalletId()
@@ -27,7 +29,10 @@ export default function WalletProductsPage() {
     mutationFn: (productId: string) => productsApi.delete(walletId, productId),
     onSuccess: () => {
       notify.success('Product deleted')
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.wallets.products.root(walletId),
+        exact: false,
+      })
       setToDelete(null)
       setConfirmOpen(false)
     },
@@ -120,12 +125,15 @@ export default function WalletProductsPage() {
       ) : (
         <div className="space-y-2 py-4">
           {products.data.map((p) => (
-            <div key={p.id}>
-              {p.name} <span>{p.importance}</span> <span>{p.period_sum}</span>
-              <Button variant="danger" onClick={() => handleAskDelete(p)}>
-                Delete
-              </Button>
-            </div>
+            <ProductWithSumListItem
+              key={p.id}
+              walletId={walletId}
+              product={p}
+              currency={walletQuery.data?.currency}
+              canManage={isOwner}
+              disabled={deleteMutation.isPending}
+              onDelete={handleAskDelete}
+            />
           ))}
         </div>
       )}
