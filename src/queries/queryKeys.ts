@@ -48,5 +48,10 @@ export const queryKeys = {
       categoriesProducts: (walletId: string, params: SummaryRange) =>
         ['wallets', walletId, 'summary', 'categoriesProducts', params] as const,
     },
+    history: {
+      root: (walletId: string) => ['wallets', walletId, 'history'] as const,
+      lastPeriods: (walletId: string, periods: number) =>
+        ['wallets', walletId, 'history', 'last-periods', { periods }] as const,
+    },
   },
 } as const
