@@ -19,6 +19,7 @@ export default function WalletDashboardPage() {
   return (
     <div>
       <PageHeader title="Dashboard" />
+
       <DashboardDateRangeInputs
         fromDate={fromDate}
         toDate={toDate}
@@ -26,12 +27,26 @@ export default function WalletDashboardPage() {
         onToDateChange={setToDate}
         disabled={wallet.isPending || settings.isPending}
       />
-      <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
-      <DashboardCategoriesProductsTreeCard
-        walletId={walletId}
-        fromDate={fromDate}
-        toDate={toDate}
-      />
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-12">
+        <div className="space-y-4 lg:col-span-8">
+          <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
+
+          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            Chart last periods (placeholder)
+          </div>
+        </div>
+
+        <div className="lg:col-span-4">
+          <div className="lg:sticky lg:top-4">
+            <DashboardCategoriesProductsTreeCard
+              walletId={walletId}
+              fromDate={fromDate}
+              toDate={toDate}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
