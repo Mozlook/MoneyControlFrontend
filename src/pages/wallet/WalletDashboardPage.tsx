@@ -7,15 +7,37 @@ import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import { useMeSettingsQuery } from '@/queries/useMeSettingQuery'
 import useWalletQuery from '@/queries/useWalletQuery'
 import { PageHeader } from '@/ui'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export default function WalletDashboardPage() {
   const walletId = useWalletId()
   const wallet = useWalletQuery(walletId)
   const settings = useMeSettingsQuery()
-  const { startDate, endDate } = currentPeriodDates(settings.data?.billing_day ?? 15)
-  const [fromDate, setFromDate] = useState<string>(startDate)
-  const [toDate, setToDate] = useState<string>(endDate)
+  const billingDay = settings.data?.billing_day
+
+  const defaultRange = useMemo(() => {
+    if (!billingDay) return null
+    return currentPeriodDates(billingDay)
+  }, [billingDay])
+
+  const [customRange, setCustomRange] = useState<{ from: string; to: string } | null>(null)
+
+  const fromDate = customRange?.from ?? defaultRange?.startDate ?? ''
+  const toDate = customRange?.to ?? defaultRange?.endDate ?? ''
+
+  const handleFromDateChange = (value: string) => {
+    setCustomRange((prev) => ({
+      from: value,
+      to: prev?.to ?? toDate,
+    }))
+  }
+
+  const handleToDateChange = (value: string) => {
+    setCustomRange((prev) => ({
+      from: prev?.from ?? fromDate,
+      to: value,
+    }))
+  }
 
   return (
     <div>
@@ -24,8 +46,8 @@ export default function WalletDashboardPage() {
       <DashboardDateRangeInputs
         fromDate={fromDate}
         toDate={toDate}
-        onFromDateChange={setFromDate}
-        onToDateChange={setToDate}
+        onFromDateChange={handleFromDateChange}
+        onToDateChange={handleToDateChange}
         disabled={wallet.isPending || settings.isPending}
       />
 

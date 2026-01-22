@@ -21,7 +21,7 @@ export default function ImportanceTile({
 
       <div className="mt-1 text-lg font-semibold text-slate-900 tabular-nums">
         {String(amount ?? 0)}
-        {currency ? <span className="text-sm font-medium text-slate-500">{currency}</span> : null}
+        {currency ? <span className="text-sm font-medium text-slate-500"> {currency}</span> : null}
       </div>
     </div>
   )
