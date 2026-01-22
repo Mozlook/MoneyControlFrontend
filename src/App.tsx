@@ -35,7 +35,7 @@ export default function App() {
           <Route path={routePatterns.settings.root} element={<SettingsPage />} />
 
           <Route path={routePatterns.wallets.base} element={<WalletLayout />}>
-            <Route index element={<Navigate to="transactions" replace />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
 
             <Route path="transactions" element={<WalletTransactionsPage />} />
             <Route path="categories" element={<WalletCategoriesPage />} />

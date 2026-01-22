@@ -83,6 +83,9 @@ export default function WalletLayoutInner({ walletId }: WalletLayoutInnerProps) 
         </div>
 
         <nav className="flex flex-wrap gap-2">
+          <NavLink to={routePaths.wallets.dashboard(walletId)} className={tabClass}>
+            Dashboard
+          </NavLink>
           <NavLink to={routePaths.wallets.transactions(walletId)} className={tabClass}>
             Transactions
           </NavLink>
@@ -97,12 +100,6 @@ export default function WalletLayoutInner({ walletId }: WalletLayoutInnerProps) 
           </NavLink>
           <NavLink to={routePaths.wallets.members(walletId)} className={tabClass}>
             Members
-          </NavLink>
-          <NavLink to={routePaths.wallets.dashboard(walletId)} className={tabClass}>
-            Dashboard
-          </NavLink>
-          <NavLink to={routePaths.wallets.history(walletId)} className={tabClass}>
-            History
           </NavLink>
         </nav>
       </header>
