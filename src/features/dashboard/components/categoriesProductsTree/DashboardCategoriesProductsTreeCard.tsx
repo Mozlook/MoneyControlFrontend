@@ -28,7 +28,7 @@ export default function DashboardCategoriesProductsTreeCard({ walletId, fromDate
   if (query.isPending) {
     return (
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="text-sm font-semibold text-slate-900">Kategorie → Produkty</div>
+        <div className="text-sm font-semibold text-slate-900">Categories → Products</div>
         <div className="flex justify-center py-10">
           <Spinner size="md" />
         </div>
@@ -58,10 +58,7 @@ export default function DashboardCategoriesProductsTreeCard({ walletId, fromDate
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-slate-900">Kategorie → Produkty</div>
-          <div className="mt-1 text-xs text-slate-500">
-            {fromDate} → {toDate}
-          </div>
+          <div className="text-sm font-semibold text-slate-900">Categories → Products</div>
         </div>
 
         <div className="flex items-center gap-2">

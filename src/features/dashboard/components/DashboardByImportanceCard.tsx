@@ -56,9 +56,7 @@ export default function DashboardByImportanceCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-sm font-semibold text-slate-900">Spending by importance</div>
-          <div className="mt-1 text-xs text-slate-500">
-            {(data?.period_start ?? fromDate) + ' → ' + (data?.period_end ?? toDate)}
-          </div>
+          <div className="mt-1 text-xs text-slate-500"></div>
         </div>
 
         {byImportance.isFetching && !byImportance.isPending ? <Spinner size="sm" /> : null}
