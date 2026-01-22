@@ -30,12 +30,12 @@ export default function WalletDashboardPage() {
       />
 
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
-        <div className="space-y-4 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-7">
           <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
           <DashboardLastPeriodsBarChartCard walletId={walletId} />
         </div>
 
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-4">
             <DashboardCategoriesProductsTreeCard
               walletId={walletId}
