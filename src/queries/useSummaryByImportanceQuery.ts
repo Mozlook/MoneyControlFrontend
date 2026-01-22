@@ -4,7 +4,7 @@ import { summaryApi } from '@/api/modules'
 import { getTokenFromStorage } from '@/authentication/handleToken'
 import type { SummaryRange } from '@/models/summary'
 
-export default function useSummaryByImportance(walletId: string, params: SummaryRange) {
+export default function useSummaryByImportanceQuery(walletId: string, params: SummaryRange) {
   const token = getTokenFromStorage()
   const hasToken = !!token?.access_token
 

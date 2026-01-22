@@ -1,3 +1,4 @@
+import DashboardByImportanceCard from '@/features/dashboard/components/DashboardByImportanceCard'
 import DashboardDateRangeInputs from '@/features/dashboard/components/DashboardDateRangeInputs'
 import { currentPeriodDates } from '@/features/dashboard/utils/currentPeriodDates'
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
@@ -13,6 +14,7 @@ export default function WalletDashboardPage() {
   const { startDate, endDate } = currentPeriodDates(settings.data?.billing_day ?? 15)
   const [fromDate, setFromDate] = useState<string>(startDate)
   const [toDate, setToDate] = useState<string>(endDate)
+
   return (
     <div>
       <PageHeader title="Dashboard" />
@@ -23,6 +25,7 @@ export default function WalletDashboardPage() {
         onToDateChange={setToDate}
         disabled={wallet.isPending || settings.isPending}
       />
+      <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
     </div>
   )
 }
