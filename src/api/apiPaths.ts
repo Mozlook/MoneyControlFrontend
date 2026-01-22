@@ -11,7 +11,9 @@ export const apiPaths = {
 
   users: {
     me: () => `/users/me`,
-    settings: () => `/users/me/settings`,
+  },
+  settings: {
+    me: () => `/settings/`,
   },
 
   wallets: {

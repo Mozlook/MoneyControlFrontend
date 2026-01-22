@@ -6,8 +6,8 @@ import type { UserSettingsRead, UserSettingsUpdate } from '@/models/userSettings
 export const usersApi = {
   getMe: () => api.get<UserRead>(apiPaths.users.me()),
 
-  getSettings: () => api.get<UserSettingsRead>(apiPaths.users.settings()),
+  getSettings: () => api.get<UserSettingsRead>(apiPaths.settings.me()),
 
   updateSettings: (payload: UserSettingsUpdate) =>
-    api.put<UserSettingsRead>(apiPaths.users.settings(), payload),
+    api.put<UserSettingsRead>(apiPaths.settings.me(), payload),
 }
