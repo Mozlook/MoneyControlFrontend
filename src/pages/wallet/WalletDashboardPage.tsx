@@ -1,6 +1,7 @@
 import DashboardCategoriesProductsTreeCard from '@/features/dashboard/components/categoriesProductsTree/DashboardCategoriesProductsTreeCard'
 import DashboardByImportanceCard from '@/features/dashboard/components/DashboardByImportanceCard'
 import DashboardDateRangeInputs from '@/features/dashboard/components/DashboardDateRangeInputs'
+import DashboardLastPeriodsBarChartCard from '@/features/dashboard/components/DashboardLastPeriodsBarChartCard'
 import { currentPeriodDates } from '@/features/dashboard/utils/currentPeriodDates'
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import { useMeSettingsQuery } from '@/queries/useMeSettingQuery'
@@ -31,10 +32,7 @@ export default function WalletDashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
         <div className="space-y-4 lg:col-span-8">
           <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
-
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            Chart last periods (placeholder)
-          </div>
+          <DashboardLastPeriodsBarChartCard walletId={walletId} />
         </div>
 
         <div className="lg:col-span-4">
