@@ -1,3 +1,4 @@
+import DashboardCategoriesProductsTreeCard from '@/features/dashboard/components/categoriesProductsTree/DashboardCategoriesProductsTreeCard'
 import DashboardByImportanceCard from '@/features/dashboard/components/DashboardByImportanceCard'
 import DashboardDateRangeInputs from '@/features/dashboard/components/DashboardDateRangeInputs'
 import { currentPeriodDates } from '@/features/dashboard/utils/currentPeriodDates'
@@ -26,6 +27,11 @@ export default function WalletDashboardPage() {
         disabled={wallet.isPending || settings.isPending}
       />
       <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
+      <DashboardCategoriesProductsTreeCard
+        walletId={walletId}
+        fromDate={fromDate}
+        toDate={toDate}
+      />
     </div>
   )
 }
