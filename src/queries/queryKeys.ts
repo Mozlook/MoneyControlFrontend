@@ -46,7 +46,7 @@ export const queryKeys = {
       byImportance: (walletId: string, params: SummaryRange) =>
         ['wallets', walletId, 'summary', 'importance', params] as const,
       categoriesProducts: (walletId: string, params: SummaryRange) =>
-        ['wallets', walletId, 'summary', 'importance', params] as const,
+        ['wallets', walletId, 'summary', 'categoriesProducts', params] as const,
     },
   },
 } as const
