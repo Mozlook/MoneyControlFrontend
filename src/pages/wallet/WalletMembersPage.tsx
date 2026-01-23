@@ -4,6 +4,7 @@ import useWalletQuery from '@/queries/useWalletQuery'
 import { Spinner, EmptyState, Button, PageHeader } from '@/ui'
 import AddMemberModal from '@/features/walletMembers/components/AddMemberModal'
 import { useState } from 'react'
+import WalletMemberListItem from '@/features/walletMembers/components/WalletMemberListItem'
 
 export default function WalletMembersPage() {
   const walletId = useWalletId()
@@ -54,14 +55,9 @@ export default function WalletMembersPage() {
           />
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="mt-2 space-y-2">
           {members.data.map((m) => (
-            <div key={m.user_id}>
-              {m.email}{' '}
-              <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
-                {m.role}
-              </span>
-            </div>
+            <WalletMemberListItem key={m.user_id} member={m} />
           ))}
         </div>
       )}

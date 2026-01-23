@@ -17,7 +17,6 @@ import WalletProductsPage from './pages/wallet/WalletProductsPage'
 import WalletRecurringPage from './pages/wallet/WalletRecurringPage'
 import WalletMembersPage from './pages/wallet/WalletMembersPage'
 import WalletDashboardPage from './pages/wallet/WalletDashboardPage'
-import WalletHistoryPage from './pages/wallet/WalletHistoryPage'
 import SettingsPage from './pages/SettingsPage'
 
 export default function App() {
@@ -43,7 +42,6 @@ export default function App() {
             <Route path="recurring" element={<WalletRecurringPage />} />
             <Route path="members" element={<WalletMembersPage />} />
             <Route path="dashboard" element={<WalletDashboardPage />} />
-            <Route path="history" element={<WalletHistoryPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />
