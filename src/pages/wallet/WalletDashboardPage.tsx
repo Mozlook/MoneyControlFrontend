@@ -46,7 +46,7 @@ export default function WalletDashboardPage() {
       <PageHeader
         title="Dashboard"
         actions={
-          <Button variant="primary" onClick={() => setIsTransactionOpen(true)}>
+          <Button variant="primary" className="mb-4" onClick={() => setIsTransactionOpen(true)}>
             Add transaction
           </Button>
         }
