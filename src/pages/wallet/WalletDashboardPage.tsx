@@ -3,10 +3,11 @@ import DashboardByImportanceCard from '@/features/dashboard/components/Dashboard
 import DashboardDateRangeInputs from '@/features/dashboard/components/DashboardDateRangeInputs'
 import DashboardLastPeriodsBarChartCard from '@/features/dashboard/components/DashboardLastPeriodsBarChartCard'
 import { currentPeriodDates } from '@/features/dashboard/utils/currentPeriodDates'
+import CreateTransactionModal from '@/features/transactions/components/CreateTransactionModal'
 import { useWalletId } from '@/features/wallets/hooks/useWalletId'
 import { useMeSettingsQuery } from '@/queries/useMeSettingQuery'
 import useWalletQuery from '@/queries/useWalletQuery'
-import { PageHeader } from '@/ui'
+import { Button, PageHeader } from '@/ui'
 import { useMemo, useState } from 'react'
 
 export default function WalletDashboardPage() {
@@ -14,6 +15,7 @@ export default function WalletDashboardPage() {
   const wallet = useWalletQuery(walletId)
   const settings = useMeSettingsQuery()
   const billingDay = settings.data?.billing_day
+  const [isTransactionOpen, setIsTransactionOpen] = useState<boolean>(false)
 
   const defaultRange = useMemo(() => {
     if (!billingDay) return null
@@ -41,7 +43,20 @@ export default function WalletDashboardPage() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" />
+      <PageHeader
+        title="Dashboard"
+        actions={
+          <Button variant="primary" onClick={() => setIsTransactionOpen(true)}>
+            Add transaction
+          </Button>
+        }
+      />
+
+      <CreateTransactionModal
+        open={isTransactionOpen}
+        onOpenChange={setIsTransactionOpen}
+        walletId={walletId}
+      />
 
       <DashboardDateRangeInputs
         fromDate={fromDate}

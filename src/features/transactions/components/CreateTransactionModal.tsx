@@ -87,8 +87,9 @@ export default function CreateTransactionModal({
         queryKey: queryKeys.wallets.transactions.root(walletId),
       })
 
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.products.root(walletId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.categories.root(walletId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.summary.root(walletId) })
 
       onOpenChange(false)
     },
