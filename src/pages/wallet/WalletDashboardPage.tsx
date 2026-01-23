@@ -46,7 +46,11 @@ export default function WalletDashboardPage() {
       <PageHeader
         title="Dashboard"
         actions={
-          <Button variant="primary" className="mb-4" onClick={() => setIsTransactionOpen(true)}>
+          <Button
+            variant="primary"
+            className="w-full sm:w-auto"
+            onClick={() => setIsTransactionOpen(true)}
+          >
             Add transaction
           </Button>
         }
@@ -58,22 +62,24 @@ export default function WalletDashboardPage() {
         walletId={walletId}
       />
 
-      <DashboardDateRangeInputs
-        fromDate={fromDate}
-        toDate={toDate}
-        onFromDateChange={handleFromDateChange}
-        onToDateChange={handleToDateChange}
-        disabled={wallet.isPending || settings.isPending}
-      />
+      <div className="mt-4">
+        <DashboardDateRangeInputs
+          fromDate={fromDate}
+          toDate={toDate}
+          onFromDateChange={handleFromDateChange}
+          onToDateChange={handleToDateChange}
+          disabled={wallet.isPending || settings.isPending}
+        />
+      </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-12">
-        <div className="space-y-4 lg:col-span-7">
+        <div className="min-w-0 space-y-4 lg:col-span-7">
           <DashboardByImportanceCard walletId={walletId} fromDate={fromDate} toDate={toDate} />
           <DashboardLastPeriodsBarChartCard walletId={walletId} />
         </div>
 
-        <div className="lg:col-span-5">
-          <div className="lg:sticky lg:top-4">
+        <div className="min-w-0 lg:col-span-5">
+          <div className="min-w-0 lg:sticky lg:top-4">
             <DashboardCategoriesProductsTreeCard
               walletId={walletId}
               fromDate={fromDate}

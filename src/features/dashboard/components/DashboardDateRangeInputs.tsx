@@ -16,10 +16,11 @@ export default function DashboardDateRangeInputs({
   disabled = false,
 }: DashboardDateRangeInputsProps) {
   return (
-    <div className="flex gap-2">
-      <div className="grid gap-1">
+    <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid min-w-0 gap-1">
         <Label>From</Label>
         <Input
+          className="w-full min-w-0"
           type="date"
           value={fromDate}
           onChange={(e) => onFromDateChange(e.target.value)}
@@ -27,9 +28,10 @@ export default function DashboardDateRangeInputs({
         />
       </div>
 
-      <div className="grid gap-1">
+      <div className="grid min-w-0 gap-1">
         <Label>To</Label>
         <Input
+          className="w-full min-w-0"
           type="date"
           value={toDate}
           onChange={(e) => onToDateChange(e.target.value)}

@@ -49,8 +49,8 @@ export default function DashboardLastPeriodsBarChartCard({ walletId, defaultPeri
   }, [chartPeriods])
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
+    <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="text-sm font-semibold text-slate-900">Expenses – last months</div>
           <div className="mt-1 text-xs text-slate-500">
@@ -58,12 +58,13 @@ export default function DashboardLastPeriodsBarChartCard({ walletId, defaultPeri
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {history.isFetching && !history.isPending ? <Spinner size="sm" /> : null}
+        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+          {history.isFetching && !history.isPending ? <Spinner size="sm" /> : <div />}
 
-          <div className="grid gap-1">
+          <div className="grid w-full gap-1 sm:w-auto">
             <Label>Billing periods</Label>
             <Select
+              className="w-full sm:w-auto sm:min-w-[140px]"
               value={String(periods)}
               onChange={(e) => setPeriods(Number(e.target.value))}
               disabled={history.isPending}
@@ -100,28 +101,33 @@ export default function DashboardLastPeriodsBarChartCard({ walletId, defaultPeri
         </div>
       ) : (
         <>
-          <div className="mt-4 flex items-end gap-2 rounded-md border border-slate-200 bg-slate-50 p-3">
-            {chartPeriods.map((p: PeriodTotalRead) => {
-              const heightPct = maxValue > 0 ? (p.total / maxValue) * 100 : 0
-              const safeHeight = Math.max(heightPct, 2)
+          <div className="mt-4 overflow-x-auto">
+            <div className="flex min-w-max items-end gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 sm:w-full sm:min-w-0">
+              {chartPeriods.map((p: PeriodTotalRead) => {
+                const heightPct = maxValue > 0 ? (p.total / maxValue) * 100 : 0
+                const safeHeight = Math.max(heightPct, 2)
 
-              return (
-                <div key={p.period_start} className="flex flex-1 flex-col items-center gap-2">
-                  <div className="relative h-40 w-full">
-                    <div
-                      className="absolute bottom-0 w-full rounded-md bg-sky-500"
-                      style={{ height: `${safeHeight}%` }}
-                      title={`${formatRange(p.period_start, p.period_end)}\nTotal: ${p.total} ${data.currency}`}
-                      aria-label={`${formatRange(p.period_start, p.period_end)}: ${p.total} ${data.currency}`}
-                    />
-                  </div>
+                return (
+                  <div
+                    key={p.period_start}
+                    className="flex w-12 shrink-0 flex-col items-center gap-2 sm:w-auto sm:flex-1 sm:shrink"
+                  >
+                    <div className="relative h-32 w-full sm:h-40">
+                      <div
+                        className="absolute bottom-0 w-full rounded-md bg-sky-500"
+                        style={{ height: `${safeHeight}%` }}
+                        title={`${formatRange(p.period_start, p.period_end)}\nTotal: ${p.total} ${data.currency}`}
+                        aria-label={`${formatRange(p.period_start, p.period_end)}: ${p.total} ${data.currency}`}
+                      />
+                    </div>
 
-                  <div className="text-[11px] text-slate-600">
-                    {formatShortDate(p.period_start)}
+                    <div className="text-[11px] whitespace-nowrap text-slate-600">
+                      {formatShortDate(p.period_start)}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
 
           <div className="mt-2 text-xs text-slate-500">

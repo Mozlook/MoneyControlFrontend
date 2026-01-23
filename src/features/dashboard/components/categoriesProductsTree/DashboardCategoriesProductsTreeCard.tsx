@@ -36,9 +36,20 @@ export default function DashboardCategoriesProductsTreeCard({ walletId, fromDate
     )
   }
 
+  if (query.isPending) {
+    return (
+      <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+        <div className="text-sm font-semibold text-slate-900">Categories → Products</div>
+        <div className="flex justify-center py-10">
+          <Spinner size="md" />
+        </div>
+      </div>
+    )
+  }
+
   if (query.isError) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
         <EmptyState
           title="Couldn't load categories/products summary"
           description={query.error instanceof Error ? query.error.message : 'Unknown error'}
@@ -55,15 +66,15 @@ export default function DashboardCategoriesProductsTreeCard({ walletId, fromDate
   if (!data) return null
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
+    <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="text-sm font-semibold text-slate-900">Categories → Products</div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2 sm:justify-end">
           {query.isFetching && !query.isPending ? <Spinner size="sm" /> : null}
-          <div className="text-sm font-semibold text-slate-900 tabular-nums">
+          <div className="text-sm font-semibold whitespace-nowrap text-slate-900 tabular-nums">
             {data.total} <span className="text-xs font-medium text-slate-500">{data.currency}</span>
           </div>
         </div>
