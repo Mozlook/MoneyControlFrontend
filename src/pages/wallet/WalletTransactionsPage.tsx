@@ -37,12 +37,12 @@ export default function WalletTransactionsPage() {
     mutationFn: (transactionId: string) => transactionsApi.refund(walletId, transactionId),
     onSuccess: () => {
       notify.success('Transaction refunded')
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.categories.root(walletId) })
       queryClient.invalidateQueries({
         queryKey: queryKeys.wallets.transactions.root(walletId),
       })
 
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'products'], exact: false })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.products.root(walletId) })
       setToRefund(null)
       setIsRefundOpen(false)
     },
@@ -78,12 +78,17 @@ export default function WalletTransactionsPage() {
       <PageHeader
         title="Transactions"
         actions={
-          <div className="flex gap-2">
-            <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button
+              variant="primary"
+              className="w-full sm:w-auto"
+              onClick={() => setIsCreateOpen(true)}
+            >
               Add transaction
             </Button>
             <Button
               variant="secondary"
+              className="w-full sm:w-auto"
               onClick={() => exportMutation.mutate(walletId)}
               disabled={exportMutation.isPending}
               loading={exportMutation.isPending}

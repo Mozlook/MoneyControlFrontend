@@ -24,21 +24,17 @@ export function TransactionsFiltersBar({ walletId, state, isFetching = false }: 
 
   return (
     <form onSubmit={onSubmit} className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
         <div className="grid gap-1">
           <Label>Period</Label>
           <Select
+            className="w-full"
             value={state.draft.current_period ? 'current' : 'custom'}
             onChange={(e) => {
               const v = e.target.value
               state.setDraft((prev) =>
                 v === 'current'
-                  ? {
-                      ...prev,
-                      current_period: true,
-                      from_date: undefined,
-                      to_date: undefined,
-                    }
+                  ? { ...prev, current_period: true, from_date: undefined, to_date: undefined }
                   : { ...prev, current_period: false },
               )
             }}
@@ -51,6 +47,7 @@ export function TransactionsFiltersBar({ walletId, state, isFetching = false }: 
         <div className="grid gap-1">
           <Label>From</Label>
           <Input
+            className="w-full"
             type="date"
             value={state.draft.from_date ?? ''}
             disabled={state.draft.current_period}
@@ -67,6 +64,7 @@ export function TransactionsFiltersBar({ walletId, state, isFetching = false }: 
         <div className="grid gap-1">
           <Label>To</Label>
           <Input
+            className="w-full"
             type="date"
             value={state.draft.to_date ?? ''}
             disabled={state.draft.current_period}
@@ -83,6 +81,7 @@ export function TransactionsFiltersBar({ walletId, state, isFetching = false }: 
         <div className="grid gap-1">
           <Label>Category</Label>
           <Select
+            className="w-full"
             value={state.draft.category_id ?? ''}
             onChange={(e) => {
               const nextCategoryId = e.target.value || undefined
@@ -113,6 +112,7 @@ export function TransactionsFiltersBar({ walletId, state, isFetching = false }: 
         <div className="grid gap-1">
           <Label>Product</Label>
           <Select
+            className="w-full"
             value={state.draft.product_id ?? ''}
             onChange={(e) => {
               const nextProductId = e.target.value || undefined
@@ -136,12 +136,18 @@ export function TransactionsFiltersBar({ walletId, state, isFetching = false }: 
           </Select>
         </div>
 
-        <div className="flex gap-2">
-          <Button type="submit" variant="primary" disabled={!canApply}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end lg:col-span-1 lg:self-end">
+          <Button type="submit" variant="primary" disabled={!canApply} className="w-full sm:w-auto">
             Apply
           </Button>
 
-          <Button type="button" variant="secondary" disabled={!canReset} onClick={state.reset}>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={!canReset}
+            onClick={state.reset}
+            className="w-full sm:w-auto"
+          >
             Reset
           </Button>
         </div>
