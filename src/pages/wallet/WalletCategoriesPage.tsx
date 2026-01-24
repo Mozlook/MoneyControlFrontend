@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { categoriesApi } from '@/api/modules'
 import ArchivedCategoriesModal from '@/features/categories/components/ArchivedCategoriesModal'
 import CategoryWithSumListItem from '@/features/categories/components/CategoryWithSumListItem'
+import { queryKeys } from '@/queries/queryKeys'
 
 export default function WalletCategoriesPage() {
   const walletId = useWalletId()
@@ -25,7 +26,7 @@ export default function WalletCategoriesPage() {
     mutationFn: (categoryId: string) => categoriesApi.delete(walletId, categoryId),
     onSuccess: () => {
       notify.success('Category deleted')
-      queryClient.invalidateQueries({ queryKey: ['wallets', walletId, 'categories'], exact: false })
+      queryClient.invalidateQueries({ queryKey: queryKeys.wallets.categories.root(walletId) })
       setToDelete(null)
       setConfirmOpen(false)
     },
@@ -56,17 +57,27 @@ export default function WalletCategoriesPage() {
         title="Wallet Categories"
         actions={
           isOwner && (
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setArchivedOpen(true)}>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+              <Button
+                variant="secondary"
+                className="w-full sm:w-auto"
+                onClick={() => setArchivedOpen(true)}
+              >
                 Archived
               </Button>
-              <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto"
+                onClick={() => setIsAddOpen(true)}
+              >
                 Add category
               </Button>
             </div>
           )
         }
-      ></PageHeader>
+      />
+
       <CreateCategoryModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
       <ConfirmModal
         title={toDelete ? `Delete category "${toDelete.name}"?` : 'Delete category?'}

@@ -24,8 +24,9 @@ export default function CategoryWithSumListItem({
         pathname: routePaths.wallets.products(walletId),
         search: `?category_id=${encodeURIComponent(category.id)}`,
       }}
-      className="flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50"
+      className="flex min-w-0 flex-col gap-3 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between"
     >
+      {/* Left */}
       <div className="flex min-w-0 items-center gap-2">
         {category.icon ? (
           <span className="shrink-0 text-slate-500">{category.icon}</span>
@@ -33,11 +34,12 @@ export default function CategoryWithSumListItem({
           <span className="shrink-0 text-slate-300">•</span>
         )}
 
-        <span className="truncate font-medium text-slate-900">{category.name}</span>
+        <span className="min-w-0 truncate font-medium text-slate-900">{category.name}</span>
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="text-sm font-semibold text-slate-900 tabular-nums">
+      {/* Right */}
+      <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+        <div className="shrink-0 text-sm font-semibold text-slate-900 tabular-nums">
           {category.period_sum ?? 0}
         </div>
 
@@ -45,6 +47,7 @@ export default function CategoryWithSumListItem({
           <Button
             variant="danger"
             size="sm"
+            className="shrink-0"
             disabled={disabled}
             onClick={(e) => {
               e.preventDefault()

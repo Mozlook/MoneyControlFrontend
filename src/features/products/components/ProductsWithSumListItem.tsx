@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Button } from '@/ui'
 import { importanceBadgeClass } from '@/ui/importanceBadgeClass'
 import type { ProductRead, ProductReadSum } from '@/models/product'
-
 import CreateTransactionModal from '@/features/transactions/components/CreateTransactionModal'
 
 type ProductWithSumListItemProps = {
@@ -43,11 +42,12 @@ export default function ProductWithSumListItem({
             setIsCreateOpen(true)
           }
         }}
-        className="flex cursor-pointer items-center justify-between gap-3 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50 focus:ring-2 focus:ring-slate-300 focus:outline-none"
+        className="flex min-w-0 cursor-pointer flex-col gap-3 rounded-md border border-slate-200 bg-white p-3 hover:bg-slate-50 focus:ring-2 focus:ring-slate-300 focus:outline-none sm:flex-row sm:items-center sm:justify-between"
       >
+        {/* Left */}
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <div className="truncate font-medium text-slate-900">{product.name}</div>
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="min-w-0 truncate font-medium text-slate-900">{product.name}</div>
 
             <span
               className={`shrink-0 rounded-md border px-2 py-0.5 text-xs font-medium ${importanceBadgeClass(
@@ -59,20 +59,20 @@ export default function ProductWithSumListItem({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-sm font-semibold text-slate-900 tabular-nums">
-              {sum}{' '}
-              {currencyLabel ? (
-                <span className="text-xs font-medium text-slate-500">{currencyLabel}</span>
-              ) : null}
-            </div>
+        {/* Right */}
+        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+          <div className="shrink-0 text-sm font-semibold text-slate-900 tabular-nums">
+            {sum}{' '}
+            {currencyLabel ? (
+              <span className="text-xs font-medium text-slate-500">{currencyLabel}</span>
+            ) : null}
           </div>
 
           {canManage && onDelete ? (
             <Button
               variant="danger"
               size="sm"
+              className="shrink-0"
               disabled={disabled}
               onClick={(e) => {
                 e.stopPropagation()

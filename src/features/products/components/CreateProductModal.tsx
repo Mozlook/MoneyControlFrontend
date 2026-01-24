@@ -62,7 +62,7 @@ export default function CreateProductModal({
       onOpenChange(false)
     },
     onError: (err) => {
-      notify.fromError(err, 'Failed to create category')
+      notify.fromError(err, 'Failed to create product')
     },
   })
 

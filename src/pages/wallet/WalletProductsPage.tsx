@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi } from '@/api/modules'
 import type { ProductRead } from '@/models/product'
 import ArchivedProductModal from '@/features/products/components/ArchivedProductsModal'
-import ProductWithSumListItem from '@/features/products/components/PRoductsWithSumListItem'
+import ProductWithSumListItem from '@/features/products/components/ProductsWithSumListItem'
 import { queryKeys } from '@/queries/queryKeys'
 
 export default function WalletProductsPage() {
@@ -62,17 +62,26 @@ export default function WalletProductsPage() {
         title="Wallet Products"
         actions={
           isOwner && (
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setArchivedOpen(true)}>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+              <Button
+                variant="secondary"
+                className="w-full sm:w-auto"
+                onClick={() => setArchivedOpen(true)}
+              >
                 Archived
               </Button>
-              <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto"
+                onClick={() => setIsAddOpen(true)}
+              >
                 Add product
               </Button>
             </div>
           )
         }
-      ></PageHeader>
+      />
       <CreateProductModal
         initialCategoryId={categoryId}
         walletId={walletId}
