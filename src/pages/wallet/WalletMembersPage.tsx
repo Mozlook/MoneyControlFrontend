@@ -18,12 +18,17 @@ export default function WalletMembersPage() {
         title="Wallet Members"
         actions={
           isOwner && (
-            <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+            <Button
+              variant="primary"
+              className="w-full sm:w-auto"
+              onClick={() => setIsAddOpen(true)}
+            >
               Add member
             </Button>
           )
         }
-      ></PageHeader>
+      />
+
       <AddMemberModal walletId={walletId} open={isAddOpen} onOpenChange={setIsAddOpen} />
       {members.isPending ? (
         <div className="flex justify-center py-16">
