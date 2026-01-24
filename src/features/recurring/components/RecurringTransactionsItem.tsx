@@ -45,7 +45,7 @@ export default function RecurringTransactionsItem({
   const active = item.active
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50">
+    <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition hover:bg-slate-50 sm:p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -83,16 +83,32 @@ export default function RecurringTransactionsItem({
           </div>
 
           {showActions && (
-            <div className="flex gap-4">
-              <Button variant="secondary" onClick={() => onEdit(item)}>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:justify-end">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-full sm:w-auto"
+                onClick={() => onEdit(item)}
+              >
                 Edit
               </Button>
+
               {active ? (
-                <Button variant="danger" onClick={() => setDeactivating(item)}>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                  onClick={() => setDeactivating(item)}
+                >
                   Deactivate
                 </Button>
               ) : (
-                <Button variant="danger" onClick={() => handleActivate(item.id)}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                  onClick={() => handleActivate(item.id)}
+                >
                   Activate
                 </Button>
               )}

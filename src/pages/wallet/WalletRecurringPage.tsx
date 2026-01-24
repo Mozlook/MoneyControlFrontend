@@ -55,6 +55,7 @@ export default function WalletRecurringPage() {
       notify.success('Recurring transactions applied')
       queryClient.invalidateQueries({ queryKey: queryKeys.wallets.recurring.root(walletId) })
       queryClient.invalidateQueries({ queryKey: queryKeys.wallets.transactions.root(walletId) })
+      setIsApplyOpen(false)
     },
     onError: (err) => {
       notify.fromError(err)
@@ -75,18 +76,28 @@ export default function WalletRecurringPage() {
         title="Wallet Recurring"
         actions={
           isOwner && (
-            <div className="flex gap-2">
-              <Button variant="primary" onClick={() => setIsApplyOpen(true)}>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+              <Button
+                variant="secondary"
+                className="w-full sm:w-auto"
+                onClick={() => setIsApplyOpen(true)}
+                disabled={applyMutation.isPending || recurring.isPending}
+                loading={applyMutation.isPending}
+              >
                 Apply
               </Button>
 
-              <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto"
+                onClick={() => setIsCreateOpen(true)}
+              >
                 Add recurring transaction
               </Button>
             </div>
           )
         }
-      ></PageHeader>
+      />
       <CreateRecurringModal
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
@@ -133,7 +144,6 @@ export default function WalletRecurringPage() {
         confirmDisabled={!isApplyOpen}
         onConfirm={() => {
           applyMutation.mutate()
-          setIsApplyOpen(false)
         }}
       />
 
@@ -175,7 +185,7 @@ export default function WalletRecurringPage() {
               key={r.id}
               item={r}
               showActions={isOwner}
-              onEdit={() => onEdit(r)}
+              onEdit={onEdit}
               setDeactivating={setDeactivating}
               handleActivate={handleActivate}
             />
