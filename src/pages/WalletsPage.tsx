@@ -7,24 +7,25 @@ import CreateWalletModal from '@/features/wallets/components/CreateWalletModal'
 
 export default function WalletsPage() {
   const walletsQuery = useWalletsQuery()
-
   const [createOpen, setCreateOpen] = useState(false)
 
   return (
-    <div className="p-6">
+    <div>
       <PageHeader
         title="Wallets"
         actions={
-          <Button variant="primary" onClick={() => setCreateOpen(true)}>
+          <Button
+            variant="primary"
+            className="w-full sm:w-auto"
+            onClick={() => setCreateOpen(true)}
+          >
             Create wallet
           </Button>
         }
       />
 
-      {/* Modal */}
       <CreateWalletModal open={createOpen} onOpenChange={setCreateOpen} />
 
-      {/* Body */}
       <div className="mt-6">
         {walletsQuery.isPending ? (
           <div className="flex justify-center py-16">
@@ -57,14 +58,14 @@ export default function WalletsPage() {
             />
           </div>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             {walletsQuery.data.map((wallet) => (
               <Link
                 key={wallet.id}
                 to={routePaths.wallets.base(wallet.id)}
                 className="rounded-lg border border-slate-200 bg-white p-4 transition hover:bg-slate-50"
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex min-w-0 items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-base font-medium text-slate-900">
                       {wallet.name}
