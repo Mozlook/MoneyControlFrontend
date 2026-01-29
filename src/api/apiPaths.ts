@@ -55,8 +55,8 @@ export const apiPaths = {
     },
 
     recurring: {
-      getAll: (walletId: Id) => `${wallet(walletId)}/recurring/`,
-      create: (walletId: Id) => `${wallet(walletId)}/recurring/`,
+      getAll: (walletId: Id) => `${wallet(walletId)}/recurring`,
+      create: (walletId: Id) => `${wallet(walletId)}/recurring`,
       update: (walletId: Id, recurringId: Id) =>
         `${wallet(walletId)}/recurring/${enc(recurringId)}`,
       delete: (walletId: Id, recurringId: Id) =>
